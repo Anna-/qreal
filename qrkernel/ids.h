@@ -120,6 +120,12 @@ inline QDebug operator<<(QDebug dbg, Id const &id)
 	return dbg.space();
 }
 
+//inline QDebug operator>>(QDebug dbg, Id const &id)
+//{
+////	dbg >> id.toString();
+////	return dbg.space();
+//}
+
 /// Convenience typedef for list of Ids.
 typedef QList<Id> IdList;
 
@@ -136,3 +142,6 @@ typedef Id Metatype;
 Q_DECLARE_METATYPE(qReal::Id)
 
 Q_DECLARE_METATYPE(qReal::IdList)
+
+QRKERNEL_EXPORT QDataStream& operator<< (QDataStream &out, qReal::Id const &id);
+QRKERNEL_EXPORT QDataStream& operator>> (QDataStream &in, qReal::Id &id);

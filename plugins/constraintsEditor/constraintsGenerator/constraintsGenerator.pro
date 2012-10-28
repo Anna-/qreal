@@ -10,25 +10,25 @@ MOC_DIR = .moc
 TRANSLATIONS = constraintsGenerator_ru.ts
 
 RESOURCES = \
-	constraintsGenerator.qrc \
+        constraintsGenerator.qrc \
 
 HEADERS = \
-	constraintsGeneratorPlugin.h \
-	generator.h \
-	concreateGenerator.h \
+        constraintsGeneratorPlugin.h \
+        generator.h \
+        concreateGenerator.h \
 
 SOURCES = \
-	constraintsGeneratorPlugin.cpp \
-	generator.cpp \
-	concreateGenerator.cpp \
-	../../../qrutils/generatorsUtils/abstractGenerator.cpp \
-	../../../qrutils/generatorsUtils/nameNormalizer.cpp \
+        constraintsGeneratorPlugin.cpp \
+        generator.cpp \
+        concreateGenerator.cpp \
+#	../../../qrutils/generatorsUtils/abstractGenerator.cpp \
+#	../../../qrutils/generatorsUtils/nameNormalizer.cpp \
 
 win32 {
-	QMAKE_POST_LINK = "xcopy templates ..\\..\\..\\bin\\templates /s /e /q /y /i "
+        QMAKE_POST_LINK = "xcopy templates ..\\..\\..\\bin\\templates /s /e /q /y /i "
 }
 else {
-	QMAKE_POST_LINK = "mkdir ../../../bin/templates/ && cp -r templates ../../../bin/templates/ "
+        QMAKE_POST_LINK = "mkdir ../../../bin/templates/ && cp -r templates ../../../bin/templates/ "
 }
 
 

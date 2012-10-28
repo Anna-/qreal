@@ -6,6 +6,7 @@
 #include "element.h"
 #include "../editorPluginInterface/elementImpl.h"
 #include "../../qrkernel/ids.h"
+#include "serializationData.h"
 
 QPainterPath qt_graphicsItem_shapeFromPath(const QPainterPath &path, const QPen &pen);
 
@@ -67,7 +68,13 @@ public:
 	bool isBreakPointPressed();
 	void breakPointUnpressed();
 
+	void highlight(QColor const color = Qt::red);
+
 	void disconnectFromNode(qReal::Id const &nodeLogicalId);
+
+	EdgeData& data();
+
+	virtual void deleteFromScene();
 
 protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -129,13 +136,13 @@ private:
 
 	bool mChaoticEdition;
 
-	ElementImpl *mElementImpl;
-
 	QPointF mLastPos;
 	QPolygonF mLastLine;
 	int mLastDragPoint;
 
 	bool mBreakPointPressed;
+
+	EdgeData mData;
 
 };
 

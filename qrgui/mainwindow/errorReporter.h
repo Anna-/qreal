@@ -6,7 +6,7 @@
 #include "mainWindow.h"
 #include "../../qrkernel/ids.h"
 #include "../../qrkernel/definitions.h"
-#include "error.h"
+//#include "error.h"
 #include "errorListWidget.h"
 #include "../toolPluginInterface/usedInterfaces/errorReporterInterface.h"
 
