@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metamodel xmlns="http://schema.real.com/schema/" version="1.0.0">
+    <namespace>UML 2.0</namespace>
+    <diagram nodeName="QDragonDiagram" name="QDragonMetaEditor">
+        <graphicTypes>
+            <node name="QDragonDiagram" description="Диаграмма ДРАКОН для описания программы" displayedName="NewDragon Diagram">
+                <graphics>
+                    <picture sizex="182" sizey="132">
+                        <rectangle fill-style="none" fill="#ffffff" stroke="#000000" y1="0" stroke-style="solid" y2="130" x1="0" x2="180" stroke-width="0"/>
+                    </picture>
+                    <labels/>
+                    <ports/>
+                </graphics>
+                <logic>
+                    <container/>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Header" description="Заголовок" displayedName="Header">
+                <graphics>
+                    <picture sizex="198" sizey="60">
+                        <ellipse fill-style="none" fill="#ffffff" stroke="#000000" y1="0" stroke-style="solid" y2="58" x1="0" x2="196" stroke-width="0"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="headerText" x="39" y="20"/>
+                    </labels>
+                    <ports/>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="headerText" displayedName="header"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <edge name="CommonEdge" displayedName="Common Edge">
+                <graphics>
+                    <lineType type="solidLine"/>
+                    <shape type="square"/>
+                </graphics>
+                <logic>
+                    <associations beginType="no_arrow" endType="no_arrow">
+                        <association beginName="begin" endName="end"/>
+                    </associations>
+                    <fromPorts/>
+                    <toPorts/>
+                    <explodesTo/>
+                </logic>
+            </edge>
+        </graphicTypes>
+    </diagram>
+</metamodel>

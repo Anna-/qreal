@@ -8,9 +8,10 @@ SUBDIRS += \
 	$$PWD/blockDiagram/blockDiagram.pro \
 #	$$PWD/hascol/hascol.pro \
 	$$PWD/metaEditor/metaEditor.pro \
-	$$PWD/requirements/requirements.pro \
-	$$PWD/domainAnalysis/domainAnalysis.pro \
-	$$PWD/deployment/deploymentEditor.pro \
+#	$$PWD/requirements/requirements.pro \
+#	$$PWD/domainAnalysis/domainAnalysis.pro \
+#	$$PWD/deployment/deploymentEditor.pro \
+	$$PWD/qDragon/qDragon.pro \
 
 # interpreted plugins
 SUBDIRS += \
@@ -20,10 +21,10 @@ SUBDIRS += \
 # tool plugins
 SUBDIRS += \
 	$$PWD/tools/exterminatus/exterminatus.pro \
-	$$PWD/tools/visualInterpreter/visualInterpreter.pro \
-	$$PWD/tools/refactoring/refactoring.pro \
+#	$$PWD/tools/visualInterpreter/visualInterpreter.pro \
+#	$$PWD/tools/refactoring/refactoring.pro \
 #	$$PWD/tools/testInvocation/testInvocation.pro \
-	$$PWD/tools/uxInfo/uxInfo.pro \
+#	$$PWD/tools/uxInfo/uxInfo.pro \
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qrutils/release/ -lqrutils
