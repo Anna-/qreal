@@ -20,16 +20,15 @@ public:
 	TrikQtsGeneratorPlugin();
 	~TrikQtsGeneratorPlugin() override;
 
-	QList<qReal::ActionInfo> actions() override;
-	QList<qReal::HotKeyActionInfo> hotKeyActions() override;
+	void init(const kitBase::KitPluginConfigurator &configurator) override;
 
-	void init(qReal::PluginConfigurator const &configurator
-			, interpreterBase::robotModel::RobotModelManagerInterface const &robotModelManager
-			, qrtext::LanguageToolboxInterface &textLanguage) override;
+	QList<qReal::ActionInfo> customActions() override;
+	QList<qReal::HotKeyActionInfo> hotKeyActions() override;
+	QIcon iconForFastSelector(const kitBase::robotModel::RobotModelInterface &robotModel) const override;
 
 protected:
 	generatorBase::MasterGeneratorBase *masterGenerator() override;
-	QString defaultFilePath(QString const &projectName) const override;
+	QString defaultFilePath(const QString &projectName) const override;
 	qReal::text::LanguageInfo language() const override;
 	QString generatorName() const override;
 

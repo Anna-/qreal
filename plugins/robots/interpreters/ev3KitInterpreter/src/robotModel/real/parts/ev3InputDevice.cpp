@@ -2,13 +2,13 @@
 
 #include <utils/tracer.h>
 
-using namespace ev3KitInterpreter::robotModel::real::parts;
-using namespace interpreterBase::robotModel;
+using namespace ev3::robotModel::real::parts;
+using namespace kitBase::robotModel;
 using namespace utils;
 
 Ev3InputDevice::Ev3InputDevice(
 		utils::robotCommunication::RobotCommunicator &robotCommunicator
-		, interpreterBase::robotModel::PortInfo const &port
+		, const kitBase::robotModel::PortInfo &port
 		, SensorTypeEnum lowLevelSensorType
 		, INPUT_DEVICE_SUBCODE sensorMode)
 	: mRobotCommunicator(robotCommunicator)
@@ -18,7 +18,7 @@ Ev3InputDevice::Ev3InputDevice(
 {
 }
 
-void Ev3InputDevice::send(QByteArray command, unsigned const responseSize, QByteArray reading)
+void Ev3InputDevice::send(QByteArray command, const unsigned responseSize, QByteArray reading)
 {
 	mRobotCommunicator.send(command, responseSize, reading);
 }

@@ -14,13 +14,14 @@ class NxtRussianCGeneratorPlugin : public NxtGeneratorPluginBase
 public:
 	NxtRussianCGeneratorPlugin();
 
-	QList<qReal::ActionInfo> actions() override;
+	QList<qReal::ActionInfo> customActions() override;
 	QList<qReal::HotKeyActionInfo> hotKeyActions() override;
+	QIcon iconForFastSelector(const kitBase::robotModel::RobotModelInterface &robotModel) const override;
 
 protected:
 	generatorBase::MasterGeneratorBase *masterGenerator() override;
-	void regenerateExtraFiles(QFileInfo const &newFileInfo) override;
-	QString defaultFilePath(QString const &projectName) const override;
+	void regenerateExtraFiles(const QFileInfo &newFileInfo) override;
+	QString defaultFilePath(const QString &projectName) const override;
 	qReal::text::LanguageInfo language() const override;
 	QString generatorName() const override;
 

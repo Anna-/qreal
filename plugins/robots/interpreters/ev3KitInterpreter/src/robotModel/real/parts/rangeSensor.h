@@ -1,23 +1,22 @@
 #pragma once
 
-#include <interpreterBase/robotModel/robotParts/rangeSensor.h>
+#include <kitBase/robotModel/robotParts/rangeSensor.h>
 #include <utils/robotCommunication/robotCommunicator.h>
 
-#include "commandConstants.h"
 #include "ev3InputDevice.h"
 
-namespace ev3KitInterpreter {
+namespace ev3 {
 namespace robotModel {
 namespace real {
 namespace parts {
 
-class RangeSensor : public interpreterBase::robotModel::robotParts::RangeSensor
+class RangeSensor : public kitBase::robotModel::robotParts::RangeSensor
 {
 	Q_OBJECT
 
 public:
-	RangeSensor(interpreterBase::robotModel::DeviceInfo const &info
-			, interpreterBase::robotModel::PortInfo const &port
+	RangeSensor(const kitBase::robotModel::DeviceInfo &info
+			, const kitBase::robotModel::PortInfo &port
 			, utils::robotCommunication::RobotCommunicator &robotCommunicator);
 
 	void read() override;

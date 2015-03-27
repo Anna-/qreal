@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>843</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -63,12 +63,19 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuPanels">
+     <property name="title">
+      <string>Panels</string>
+     </property>
+    </widget>
     <addaction name="actionFullscreen"/>
     <addaction name="separator"/>
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
     <addaction name="separator"/>
     <addaction name="actionShowSplash"/>
+    <addaction name="separator"/>
+    <addaction name="menuPanels"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -128,7 +135,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionPrint"/>
    <addaction name="actionNewProject"/>
    <addaction name="actionNew_Diagram"/>
    <addaction name="actionOpen"/>
@@ -414,7 +420,7 @@
   </widget>
   <widget class="QToolBar" name="generatorsToolbar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Generators Toolbar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>

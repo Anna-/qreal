@@ -52,7 +52,7 @@ LuaInterpreter::LuaInterpreter(QList<core::Error> &errors)
 }
 
 QVariant LuaInterpreter::interpret(const QSharedPointer<core::ast::Node> &root
-		, core::SemanticAnalyzer const &semanticAnalyzer)
+		, const core::SemanticAnalyzer &semanticAnalyzer)
 {
 	Q_UNUSED(semanticAnalyzer);
 
@@ -79,12 +79,12 @@ QVariant LuaInterpreter::interpret(const QSharedPointer<core::ast::Node> &root
 		return as<ast::String>(root)->string();
 	} else if (root->is<ast::TableConstructor>()) {
 		QStringList temp;
-		for (auto const &node : as<ast::TableConstructor>(root)->initializers()) {
+		for (const auto &node : as<ast::TableConstructor>(root)->initializers()) {
 			if (node->implicitKey()) {
 				temp << interpret(node->value(), semanticAnalyzer).value<QString>();
 			} else {
 				if (semanticAnalyzer.type(node->key())->is<types::Number>()) {
-					auto const index = interpret(node->key(), semanticAnalyzer).toInt();
+					const auto index = interpret(node->key(), semanticAnalyzer).toInt();
 					if (temp.size() <= index) {
 						for (int i = 0; index >= temp.size(); ++i) {
 							/// @todo: add proper "nil" value.
@@ -109,6 +109,14 @@ QVariant LuaInterpreter::interpret(const QSharedPointer<core::ast::Node> &root
 
 		if (variable->is<ast::Identifier>()) {
 			auto name = as<ast::Identifier>(variable)->name();
+
+			if (mReadOnlyVariables.contains(name)) {
+				mErrors.append(core::Error(root->start(), QObject::tr("Variable %1 is read-only")
+						, core::ErrorType::runtimeError, core::Severity::error));
+
+				return QVariant();
+			}
+
 			mIdentifierValues.insert(name, interpretedValue);
 			return QVariant();
 		} else if (variable->is<ast::IndexingExpression>()) {
@@ -165,13 +173,14 @@ QVariant LuaInterpreter::interpret(const QSharedPointer<core::ast::Node> &root
 }
 
 QVariant LuaInterpreter::operateOnIndexingExpression(const QSharedPointer<core::ast::Node> &indexingExpression
-		, core::SemanticAnalyzer const &semanticAnalyzer
-		, std::function<QVariant(const QString &, QStringList &, int)> const &action)
+		, const core::SemanticAnalyzer &semanticAnalyzer
+		, const std::function<QVariant(const QString &, QStringList &, int)> &action)
 {
 	if (as<ast::IndexingExpression>(indexingExpression)->table()->is<ast::Identifier>()) {
 		auto name = as<ast::Identifier>(as<ast::IndexingExpression>(indexingExpression)->table())->name();
 		if (semanticAnalyzer.type(as<ast::IndexingExpression>(indexingExpression)->indexer())->is<types::Number>()) {
-			auto index = interpret(as<ast::IndexingExpression>(indexingExpression)->indexer(), semanticAnalyzer).toInt();
+			auto index = interpret(as<ast::IndexingExpression>(indexingExpression)->indexer(), semanticAnalyzer)
+					.toInt();
 
 			auto table = mIdentifierValues.value(name).value<QStringList>();
 			if (table.size() <= index) {
@@ -197,7 +206,7 @@ QVariant LuaInterpreter::operateOnIndexingExpression(const QSharedPointer<core::
 }
 
 void LuaInterpreter::addIntrinsicFunction(const QString &name
-		, std::function<QVariant(QList<QVariant> const &)> const &semantic)
+		, std::function<QVariant(const QList<QVariant> &)> const &semantic)
 {
 	mIntrinsicFunctions.insert(name, semantic);
 }
@@ -212,7 +221,7 @@ QVariant LuaInterpreter::value(const QString &identifier) const
 	return mIdentifierValues.value(identifier);
 }
 
-void LuaInterpreter::setVariableValue(const QString &name, QVariant const &value)
+void LuaInterpreter::setVariableValue(const QString &name, const QVariant &value)
 {
 	QString valueString = value.toString();
 	if (!valueString.isEmpty()
@@ -229,19 +238,25 @@ void LuaInterpreter::setVariableValue(const QString &name, QVariant const &value
 	}
 }
 
+void LuaInterpreter::addReadOnlyVariable(const QString &name)
+{
+	mReadOnlyVariables.insert(name);
+}
+
 void LuaInterpreter::clear()
 {
 	mIdentifierValues.clear();
+	mReadOnlyVariables.clear();
 }
 
 QVariant LuaInterpreter::interpretUnaryOperator(const QSharedPointer<core::ast::Node> &root
-		, core::SemanticAnalyzer const &semanticAnalyzer)
+		, const core::SemanticAnalyzer &semanticAnalyzer)
 {
 	auto operand = as<ast::UnaryOperator>(root)->operand();
 	if (root->is<ast::UnaryMinus>()) {
 		return -interpret(operand, semanticAnalyzer).toFloat();
 	} else if (root->is<ast::Not>()) {
-		QVariant const operandResult = interpret(operand, semanticAnalyzer);
+		const QVariant operandResult = interpret(operand, semanticAnalyzer);
 		/// @todo Code 'nil' more adequately.
 		if (operandResult.isNull()) {
 			return true;
@@ -262,7 +277,7 @@ QVariant LuaInterpreter::interpretUnaryOperator(const QSharedPointer<core::ast::
 }
 
 QVariant LuaInterpreter::interpretBinaryOperator(const QSharedPointer<core::ast::Node> &root
-		, core::SemanticAnalyzer const &semanticAnalyzer)
+		, const core::SemanticAnalyzer &semanticAnalyzer)
 {
 	auto leftOperand = as<ast::BinaryOperator>(root)->leftOperand();
 	auto rightOperand = as<ast::BinaryOperator>(root)->rightOperand();
@@ -278,8 +293,8 @@ QVariant LuaInterpreter::interpretBinaryOperator(const QSharedPointer<core::ast:
 		return leftOperandValue.toDouble()
 				* interpret(rightOperand, semanticAnalyzer).toDouble();
 	} else if (root->is<ast::Division>()) {
-		auto const leftOperandValue = interpret(leftOperand, semanticAnalyzer).toDouble();
-		auto const rightOperandValue = interpret(rightOperand, semanticAnalyzer).toDouble();
+		const auto leftOperandValue = interpret(leftOperand, semanticAnalyzer).toDouble();
+		const auto rightOperandValue = interpret(rightOperand, semanticAnalyzer).toDouble();
 		if (rightOperandValue != 0) {
 			return leftOperandValue / rightOperandValue;
 		} else {
@@ -288,8 +303,8 @@ QVariant LuaInterpreter::interpretBinaryOperator(const QSharedPointer<core::ast:
 			return 0;
 		}
 	} else if (root->is<ast::IntegerDivision>()) {
-		auto const leftOperandValue = interpret(leftOperand, semanticAnalyzer).toInt();
-		auto const rightOperandValue = interpret(rightOperand, semanticAnalyzer).toInt();
+		const auto leftOperandValue = interpret(leftOperand, semanticAnalyzer).toInt();
+		const auto rightOperandValue = interpret(rightOperand, semanticAnalyzer).toInt();
 		if (rightOperandValue != 0) {
 			return leftOperandValue / rightOperandValue;
 		} else {
@@ -301,8 +316,8 @@ QVariant LuaInterpreter::interpretBinaryOperator(const QSharedPointer<core::ast:
 		return pow(interpret(leftOperand, semanticAnalyzer).toDouble()
 				, interpret(rightOperand, semanticAnalyzer).toDouble());
 	} else if (root->is<ast::Modulo>()) {
-		auto const leftOperandValue = interpret(leftOperand, semanticAnalyzer).toInt();
-		auto const rightOperandValue = interpret(rightOperand, semanticAnalyzer).toInt();
+		const auto leftOperandValue = interpret(leftOperand, semanticAnalyzer).toInt();
+		const auto rightOperandValue = interpret(rightOperand, semanticAnalyzer).toInt();
 		if (rightOperandValue != 0) {
 			return leftOperandValue % rightOperandValue;
 		} else {

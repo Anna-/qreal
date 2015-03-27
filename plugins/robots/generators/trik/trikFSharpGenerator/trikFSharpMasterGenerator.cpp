@@ -1,17 +1,21 @@
 #include "trikFSharpMasterGenerator.h"
 
+#include "trikFSharpControlFlowValidator.h"
+
 #include <qrutils/outFile.h>
 #include <qrutils/stringUtils.h>
 
 using namespace trik::fSharp;
 
-TrikFSharpMasterGenerator::TrikFSharpMasterGenerator(qrRepo::RepoApi const &repo
+TrikFSharpMasterGenerator::TrikFSharpMasterGenerator(const qrRepo::RepoApi &repo
 		, qReal::ErrorReporterInterface &errorReporter
-		, interpreterBase::robotModel::RobotModelManagerInterface const &robotModelManager
+		, const utils::ParserErrorReporter &parserErrorReporter
+		, const kitBase::robotModel::RobotModelManagerInterface &robotModelManager
 		, qrtext::LanguageToolboxInterface &textLanguage
-		, qReal::Id const &diagramId
-		, QString const &generatorName)
-	: TrikMasterGeneratorBase(repo, errorReporter, robotModelManager, textLanguage, diagramId, generatorName)
+		, const qReal::Id &diagramId
+		, const QString &generatorName)
+	: TrikMasterGeneratorBase(repo, errorReporter, parserErrorReporter, robotModelManager, textLanguage, diagramId
+			, generatorName)
 {
 }
 
@@ -23,4 +27,9 @@ QString TrikFSharpMasterGenerator::targetPath()
 bool TrikFSharpMasterGenerator::supportsGotoGeneration() const
 {
 	return false;
+}
+
+generatorBase::PrimaryControlFlowValidator *TrikFSharpMasterGenerator::createValidator()
+{
+	return new TrikFSharpControlFlowValidator(mRepo, mErrorReporter, *mCustomizer, this);
 }

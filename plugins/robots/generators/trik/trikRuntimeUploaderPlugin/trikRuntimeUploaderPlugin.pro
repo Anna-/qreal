@@ -1,35 +1,22 @@
-QT += widgets
+TARGET = robots-trik-runtime-uploader-plugin
 
-CONFIG += c++11
+include(../../../../../global.pri)
+
+QT += widgets
 
 TEMPLATE = lib
 CONFIG += plugin
 
-DESTDIR = $$PWD/../../../../../bin/plugins/tools/kitPlugins/
-TARGET = robots-trik-runtime-uploader-plugin
+DESTDIR = $$DESTDIR/plugins/tools/
 
-MOC_DIR = .moc
-RCC_DIR = .moc
-OBJECTS_DIR = .obj
+includes(plugins/robots/generators/trik/trikGeneratorBase \
+		plugins/robots/generators/generatorBase \
+		plugins/robots/common/kitBase \
+		plugins/robots/utils \
+		qrtext \
+)
 
-LIBS += -L$$PWD/../../../../../bin -lqrkernel -lqslog -lqrutils -lqrrepo \
-		-lrobots-generator-base -lrobots-trik-generator-base \
-
-INCLUDEPATH += \
-	$$PWD/../trikGeneratorBase/include/ \
-	$$PWD/../../generatorBase/include/ \
-	$$PWD/../../../interpreters/interpreterBase/include \
-	$$PWD/../../../utils/include/ \
-	$$PWD/../../../../../ \
-	$$PWD/../../../../../qrgui \
-	$$PWD/../../../../../qrtext/include \
-
-# workaround for http://bugreports.qt.nokia.com/browse/QTBUG-8110
-# when fixed it would become possible to use QMAKE_LFLAGS_RPATH
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD/../../../../../bin/
-	QMAKE_LFLAGS += -Wl,-rpath,$$PWD/../../../../../bin/plugins/
-}
+links(qrkernel qslog qrutils qrrepo robots-generator-base robots-trik-generator-base)
 
 TRANSLATIONS = $$PWD/../../../../../qrtranslations/ru/plugins/robots/trikRuntimeUploaderPlugin_ru.ts
 

@@ -2,7 +2,7 @@
 
 #include <QtCore/QSharedPointer>
 
-#include "src/interpreter/details/blocksTable.h"
+#include "interpreterCore/interpreter/details/blocksTable.h"
 #include "support/dummyBlocksFactory.h"
 
 using namespace qrTest::robotsTests::interpreterCoreTests;
@@ -19,15 +19,16 @@ void BlocksTableTest::SetUp()
 	EXPECT_CALL(mBlocksFactoryManager, addFactory(_, _)).Times(0);
 
 	ON_CALL(mBlocksFactoryManager, block(_, _)).WillByDefault(
-			Invoke([=] (qReal::Id const &id, interpreterBase::robotModel::RobotModelInterface const &robotModel) {
+			Invoke([=] (qReal::Id const &id, kitBase::robotModel::RobotModelInterface const &robotModel) {
 					Q_UNUSED(robotModel)
 					return blocksFactory->block(id);
 			} )
 			);
+
 	EXPECT_CALL(mBlocksFactoryManager, block(_, _)).Times(AtLeast(0));
 
 	ON_CALL(mBlocksFactoryManager, enabledBlocks(_)).WillByDefault(
-			Invoke([=] (interpreterBase::robotModel::RobotModelInterface const &robotModel) {
+			Invoke([=] (kitBase::robotModel::RobotModelInterface const &robotModel) {
 					Q_UNUSED(robotModel)
 					return blocksFactory->providedBlocks().toSet();
 			} )

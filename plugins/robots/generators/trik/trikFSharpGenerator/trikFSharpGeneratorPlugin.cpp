@@ -12,36 +12,46 @@
 using namespace trik::fSharp;
 using namespace qReal;
 
+const QString robotModelName = "TrikFSharpGeneratorRobotModel";
+
 TrikFSharpGeneratorPlugin::TrikFSharpGeneratorPlugin()
-	: mGenerateCodeAction(new QAction(nullptr))
+	: TrikGeneratorPluginBase(robotModelName, tr("Generation (F#)"), 7 /* Last order */)
+	, mGenerateCodeAction(new QAction(nullptr))
 	, mUploadProgramAction(new QAction(nullptr))
 	, mRunProgramAction(new QAction(nullptr))
 	, mStopRobotAction(new QAction(nullptr))
-{
-}
-
-QList<ActionInfo> TrikFSharpGeneratorPlugin::actions()
+	, mAdditionalPreferences(new TrikFSharpAdditionalPreferences(robotModelName))
 {
 	mGenerateCodeAction->setText(tr("Generate FSharp code"));
 	mGenerateCodeAction->setIcon(QIcon(":/fSharp/images/generateFsCode.svg"));
-	ActionInfo generateCodeActionInfo(mGenerateCodeAction, "generators", "tools");
 	connect(mGenerateCodeAction, &QAction::triggered, this, &TrikFSharpGeneratorPlugin::generateCode);
 
 	mUploadProgramAction->setText(tr("Upload program FSharp"));
 	mUploadProgramAction->setIcon(QIcon(":/fSharp/images/uploadProgram.svg"));
-	ActionInfo uploadProgramActionInfo(mUploadProgramAction, "generators", "tools");
 	connect(mUploadProgramAction, &QAction::triggered, this, &TrikFSharpGeneratorPlugin::uploadProgram);
 
 	mRunProgramAction->setText(tr("Run program FSharp"));
-	mRunProgramAction->setIcon(QIcon(":/fSharp/images/uploadAndExecuteProgram.svg"));
-	ActionInfo runProgramActionInfo(mRunProgramAction, "generators", "tools");
+	mRunProgramAction->setIcon(QIcon(":/fSharp/images/run.png"));
 	connect(mRunProgramAction, &QAction::triggered, this, &TrikFSharpGeneratorPlugin::runProgram);
 
 	mStopRobotAction->setText(tr("Stop robot"));
-	mStopRobotAction->setIcon(QIcon(":/fSharp/images/stopRobot.svg"));
-	ActionInfo stopRobotActionInfo(mStopRobotAction, "generators", "tools");
+	mStopRobotAction->setIcon(QIcon(":/fSharp/images/stop.png"));
 	connect(mStopRobotAction, &QAction::triggered, this, &TrikFSharpGeneratorPlugin::stopRobot);
+}
 
+TrikFSharpGeneratorPlugin::~TrikFSharpGeneratorPlugin()
+{
+	if (mOwnsAdditionalPreferences) {
+		delete mAdditionalPreferences;
+	}
+}
+
+QList<ActionInfo> TrikFSharpGeneratorPlugin::customActions()
+{
+	const ActionInfo generateCodeActionInfo(mGenerateCodeAction, "generators", "tools");
+	const ActionInfo uploadProgramActionInfo(mUploadProgramAction, "generators", "tools");
+	const ActionInfo runProgramActionInfo(mRunProgramAction, "interpreters", "tools");
+	const ActionInfo stopRobotActionInfo(mStopRobotAction, "interpreters", "tools");
 	return {generateCodeActionInfo, uploadProgramActionInfo, runProgramActionInfo, stopRobotActionInfo};
 }
 
@@ -60,17 +70,30 @@ QList<HotKeyActionInfo> TrikFSharpGeneratorPlugin::hotKeyActions()
 	return {generateCodeInfo, uploadProgramInfo, runProgramInfo, stopRobotInfo};
 }
 
+QIcon TrikFSharpGeneratorPlugin::iconForFastSelector(const kitBase::robotModel::RobotModelInterface &robotModel) const
+{
+	Q_UNUSED(robotModel)
+	return QIcon(":/fSharp/images/switch-to-trik-f-sharp.svg");
+}
+
+QList<kitBase::AdditionalPreferences *> TrikFSharpGeneratorPlugin::settingsWidgets()
+{
+	mOwnsAdditionalPreferences = false;
+	return {mAdditionalPreferences};
+}
+
 generatorBase::MasterGeneratorBase *TrikFSharpGeneratorPlugin::masterGenerator()
 {
 	return new TrikFSharpMasterGenerator(*mRepo
 			, *mMainWindowInterface->errorReporter()
+			, *mParserErrorReporter
 			, *mRobotModelManager
 			, *mTextLanguage
 			, mMainWindowInterface->activeDiagram()
 			, generatorName());
 }
 
-QString TrikFSharpGeneratorPlugin::defaultFilePath(QString const &projectName) const
+QString TrikFSharpGeneratorPlugin::defaultFilePath(const QString &projectName) const
 {
 	return QString("trik/%1/%1.fs").arg(projectName);
 }
@@ -88,9 +111,9 @@ QString TrikFSharpGeneratorPlugin::generatorName() const
 bool TrikFSharpGeneratorPlugin::uploadProgram()
 {
 	QProcess compileProcess;
-	QFileInfo const fileInfo = generateCodeForProcessing();
+	const QFileInfo fileInfo = generateCodeForProcessing();
 
-	QString const pathToTheTrikCore = " -r \"..\\..\\Trik.Core.dll\"";
+	const QString pathToTheTrikCore = " -r \"..\\..\\Trik.Core.dll\"";
 
 	if (qReal::SettingsManager::value("FSharpPath").toString().isEmpty()) {
 		mMainWindowInterface->errorReporter()->addError(
@@ -100,7 +123,7 @@ bool TrikFSharpGeneratorPlugin::uploadProgram()
 		return false;
 	}
 
-	QString const compileCommand = QString("\"%1\" \"%2\" %3")
+	const QString compileCommand = QString("\"%1\" \"%2\" %3")
 			.arg(qReal::SettingsManager::value("FSharpPath").toString())
 			.arg(fileInfo.absoluteFilePath())
 			.arg(pathToTheTrikCore);
@@ -123,7 +146,7 @@ bool TrikFSharpGeneratorPlugin::uploadProgram()
 		return false;
 	}
 
-	QString const moveCommand = QString(
+	const QString moveCommand = QString(
 			"\"%1\" /command  \"open scp://root@%2\" \"put %3 /home/root/trik/FSharp/Environment/\"")
 			.arg(qReal::SettingsManager::value("WinScpPath").toString())
 			.arg(qReal::SettingsManager::value("TrikTcpServer").toString())
@@ -151,7 +174,7 @@ void TrikFSharpGeneratorPlugin::runProgram()
 	utils::TcpRobotCommunicator communicator("TrikTcpServer");
 
 	communicator.runDirectCommand(
-			"brick.system(\"mono FSharp/Environment/example0.exe\"); "
+			"script.system(\"mono FSharp/Environment/example0.exe\"); "
 	);
 }
 
@@ -164,8 +187,8 @@ void TrikFSharpGeneratorPlugin::stopRobot()
 	}
 
 	communicator.runDirectCommand(
-			"brick.system(\"killall mono\"); "
-			"brick.system(\"killall aplay\"); \n"
-			"brick.system(\"killall vlc\");"
+			"script.system(\"killall mono\"); "
+			"script.system(\"killall aplay\"); \n"
+			"script.system(\"killall vlc\");"
 	);
 }

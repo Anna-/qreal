@@ -1,24 +1,13 @@
-TEMPLATE = lib
-
-DESTDIR = $$PWD/../../bin
-
 TARGET = qrgui-dialogs
+
+include(../../global.pri)
+
+TEMPLATE = lib
 
 QT += widgets
 
-LIBS += -L$$PWD/../../bin -lqrkernel -lqrutils -lqrgui-models
-
-INCLUDEPATH = \
-	$$PWD/ \
-	$$PWD/../ \
-	$$PWD/../../ \
-
-CONFIG += c++11
-
-OBJECTS_DIR = .obj
-UI_DIR = .ui
-MOC_DIR = .moc
-RCC_DIR = .moc
+links(qrkernel qrutils qrgui-models)
+includes(qrgui)
 
 DEFINES += QRGUI_DIALOGS_LIBRARY
 
@@ -40,6 +29,7 @@ HEADERS += \
 	$$PWD/projectManagement/suggestToCreateDiagramWidget.h \
 	$$PWD/projectManagement/suggestToCreateDiagramDialog.h \
 	$$PWD/projectManagement/suggestToCreateProjectDialog.h \
+	$$PWD/generationRules/specifyGenerationRulesDialog.h \
 	$$PWD/findReplaceDialog.h \
 
 SOURCES += \
@@ -57,6 +47,7 @@ SOURCES += \
 	$$PWD/projectManagement/suggestToCreateDiagramWidget.cpp \
 	$$PWD/projectManagement/suggestToCreateDiagramDialog.cpp \
 	$$PWD/projectManagement/suggestToCreateProjectDialog.cpp \
+	$$PWD/generationRules/specifyGenerationRulesDialog.cpp \
 	$$PWD/findReplaceDialog.cpp \
 
 FORMS += \
@@ -67,4 +58,5 @@ FORMS += \
 	$$PWD/metamodelingOnFly/addNodeDialog.ui \
 	$$PWD/metamodelingOnFly/restorePropertiesDialog.ui \
 	$$PWD/metamodelingOnFly/restoreElementDialog.ui \
+	$$PWD/generationRules/specifyGenerationRulesDialog.ui \
 	$$PWD/findReplaceDialog.ui \

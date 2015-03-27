@@ -28,7 +28,7 @@ public:
 	ToolPluginManager();
 	~ToolPluginManager();
 
-	void init(PluginConfigurator const &configurator);
+	void init(const PluginConfigurator &configurator);
 	void updateSettings();
 	QList<ActionInfo> actions() const;
 	QList<QPair<QString, gui::PreferencesPage *> > preferencesPages() const;
@@ -45,10 +45,9 @@ public:
 	/// If there're more than one plugin of that kind, it is not specified which one will be used.
 	Customizer *customizer() const;
 
-	/// Notifies plugins about change of currently open tab. If last tab is closed or current
-	/// tab is not diagram at all (text editor, for example), rootElementId is Id()
-	/// @param rootElementId Id of the tab which became active after change, if applicable. If not, Id().
-	void activeTabChanged(Id const & rootElementId);
+	/// Notifies plugins about change of currently open tab. The passed in parameter structure contains information
+	/// about newly opened tab (or maybe null info in case of last tab is closed).
+	void activeTabChanged(const TabInfo &info);
 
 private:
 	/// Asks plugins for custom default settings and merges them with engine`s ones.

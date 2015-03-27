@@ -1,52 +1,43 @@
-QT += widgets network
+TARGET = robots-trik-f-sharp-generator
 
-CONFIG += c++11
+include(../../../../../global.pri)
+
+QT += widgets network
 
 TEMPLATE = lib
 CONFIG += plugin
 
-DESTDIR = $$PWD/../../../../../bin/plugins/tools/kitPlugins/
-TARGET = robots-trik-f-sharp-generator
+copyToDestdir($$PWD/lib/Trik.Core.dll)
 
-MOC_DIR = .moc
-RCC_DIR = .moc
-OBJECTS_DIR = .obj
+DESTDIR = $$DESTDIR/plugins/tools/kitPlugins/
 
-LIBS += -L$$PWD/../../../../../bin -lqrkernel -lqslog -lqrutils -lqrrepo -lqscintilla2 \
-		-lrobots-generator-base -lrobots-trik-generator-base -lrobots-utils \
+includes(plugins/robots/generators/trik/trikGeneratorBase \
+		plugins/robots/generators/generatorBase \
+		plugins/robots/common/kitBase \
+		plugins/robots/utils \
+		qrtext \
+)
 
-INCLUDEPATH += \
-	$$PWD/../trikGeneratorBase/include/ \
-	$$PWD/../../generatorBase/include/ \
-	$$PWD/../../../interpreters/interpreterBase/include \
-	$$PWD/../../../utils/include/ \
-	$$PWD/../../../../../ \
-	$$PWD/../../../../../qrgui \
-	$$PWD/../../../../../qrtext/include \
-
-win32 {
-	QMAKE_POST_LINK = "cmd /C "copy lib\\Trik.Core.dll ..\\..\\..\\..\\..\\bin /y""
-}
-else {
-	QMAKE_POST_LINK = "cp lib/Trik.Core.dll ../../../../../bin"
-}
-
-# workaround for http://bugreports.qt.nokia.com/browse/QTBUG-8110
-# when fixed it would become possible to use QMAKE_LFLAGS_RPATH
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD/../../../../../bin/
-	QMAKE_LFLAGS += -Wl,-rpath,$$PWD/../../../../../bin/plugins/
-}
+links(qrkernel qslog qrutils qrrepo qscintilla2 robots-generator-base robots-trik-generator-base robots-utils \
+		qrgui-preferences-dialog robots-kit-base \
+)
 
 TRANSLATIONS = $$PWD/../../../../../qrtranslations/ru/plugins/robots/trikFSharpGenerator_ru.ts
 
 HEADERS += \
 	$$PWD/trikFSharpGeneratorPlugin.h \
 	$$PWD/trikFSharpMasterGenerator.h \
+	$$PWD/trikFSharpAdditionalPreferences.h \
+	$$PWD/trikFSharpControlFlowValidator.h \
 
 SOURCES += \
 	$$PWD/trikFSharpGeneratorPlugin.cpp \
 	$$PWD/trikFSharpMasterGenerator.cpp \
+	$$PWD/trikFSharpAdditionalPreferences.cpp \
+	$$PWD/trikFSharpControlFlowValidator.cpp \
+
+FORMS += \
+	$$PWD/trikFSharpAdditionalPreferences.ui \
 
 RESOURCES = \
 	$$PWD/trikFSharpGenerator.qrc \

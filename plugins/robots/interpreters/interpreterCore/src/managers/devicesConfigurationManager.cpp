@@ -1,12 +1,12 @@
-#include "devicesConfigurationManager.h"
+#include "interpreterCore/managers/devicesConfigurationManager.h"
 
 #include <QtXml/QDomDocument>
 
 #include <qrkernel/settingsManager.h>
-#include <interpreterBase/robotModel/robotModelUtils.h>
+#include <kitBase/robotModel/robotModelUtils.h>
 
 using namespace interpreterCore;
-using namespace interpreterBase;
+using namespace kitBase;
 using namespace robotModel;
 using namespace qReal;
 
@@ -22,7 +22,7 @@ DevicesConfigurationManager::DevicesConfigurationManager(
 	, mMainWindowInterpretersInterface(mainWindowInterpretersInterface)
 {
 	QObject::connect(&systemEvents, &qReal::SystemEvents::activeTabChanged
-			, [&] (Id const &diagramRootId) { this->onActiveTabChanged(diagramRootId); });
+			, [&] (const TabInfo &info) { this->onActiveTabChanged(info); });
 }
 
 QString DevicesConfigurationManager::save() const
@@ -30,12 +30,12 @@ QString DevicesConfigurationManager::save() const
 	QDomDocument result;
 	QDomElement rootElement = result.createElement("devicesConfiguration");
 	result.appendChild(rootElement);
-	for (QString const &robotModel : configuredModels()) {
+	for (const QString &robotModel : configuredModels()) {
 		QDomElement robotModelElement = result.createElement("robotModel");
 		robotModelElement.setAttribute("name", robotModel);
 		rootElement.appendChild(robotModelElement);
-		for (PortInfo const &port : configuredPorts(robotModel)) {
-			DeviceInfo const device = currentConfiguration(robotModel, port);
+		for (const PortInfo &port : configuredPorts(robotModel)) {
+			const DeviceInfo device = currentConfiguration(robotModel, port);
 			QDomElement configurationElement = result.createElement("configuration");
 			configurationElement.setAttribute("port", port.toString());
 			configurationElement.setAttribute("device", device.toString());
@@ -46,20 +46,20 @@ QString DevicesConfigurationManager::save() const
 	return result.toString();
 }
 
-void DevicesConfigurationManager::load(QString const &configuration)
+void DevicesConfigurationManager::load(const QString &configuration)
 {
 	clearConfiguration(Reason::loading);
 
 	QMap<QString, QMap<PortInfo, DeviceInfo>> const parsed = RobotModelUtils::deserialize(configuration);
-	for (QString const &robotModel : parsed.keys()) {
-		for (PortInfo const &port : parsed[robotModel].keys()) {
+	for (const QString &robotModel : parsed.keys()) {
+		for (const PortInfo &port : parsed[robotModel].keys()) {
 			deviceConfigurationChanged(robotModel, port, parsed[robotModel][port], Reason::loading);
 		}
 	}
 }
 
-void DevicesConfigurationManager::onDeviceConfigurationChanged(QString const &robotModel
-		, PortInfo const &port, DeviceInfo const &sensor, Reason reason)
+void DevicesConfigurationManager::onDeviceConfigurationChanged(const QString &robotModel
+		, const PortInfo &port, const DeviceInfo &sensor, Reason reason)
 {
 	if (reason == Reason::loading) {
 		return;
@@ -69,21 +69,24 @@ void DevicesConfigurationManager::onDeviceConfigurationChanged(QString const &ro
 	Q_UNUSED(port)
 	Q_UNUSED(sensor)
 
-	qReal::Id const activeDiagramGraphicalId = mMainWindowInterpretersInterface.activeDiagram();
+	const qReal::Id activeDiagramGraphicalId = mMainWindowInterpretersInterface.activeDiagram();
 	if (activeDiagramGraphicalId.isNull()) {
 		return;
 	}
 
-	qReal::Id const logicalRootId = mGraphicalModelAssistInterface.logicalId(activeDiagramGraphicalId);
+	const qReal::Id logicalRootId = mGraphicalModelAssistInterface.logicalId(activeDiagramGraphicalId);
 	mLogicalModelAssistInterface.setPropertyByRoleName(logicalRootId, save(), "devicesConfiguration");
 }
 
-void DevicesConfigurationManager::onActiveTabChanged(Id const &graphicalRootId)
+void DevicesConfigurationManager::onActiveTabChanged(const TabInfo &info)
 {
-	if (graphicalRootId.isNull()) {
+	if (info.type() != TabInfo::TabType::editor) {
 		return;
 	}
 
-	qReal::Id const logicalRootId = mGraphicalModelAssistInterface.logicalId(graphicalRootId);
-	load(mLogicalModelAssistInterface.propertyByRoleName(logicalRootId, "devicesConfiguration").toString());
+	const Id logicalRootId = mGraphicalModelAssistInterface.logicalId(info.rootDiagramId());
+	const QString devicesConfiguration = logicalRootId.isNull()
+			? QString()
+			: mLogicalModelAssistInterface.propertyByRoleName(logicalRootId, "devicesConfiguration").toString();
+	load(devicesConfiguration);
 }

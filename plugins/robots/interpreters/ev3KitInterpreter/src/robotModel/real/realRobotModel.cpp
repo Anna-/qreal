@@ -3,7 +3,7 @@
 #include <qrkernel/settingsManager.h>
 #include <qrkernel/exception/exception.h>
 
-#include "communication/bluetoothRobotCommunicationThread.h"
+#include "src/communication/bluetoothRobotCommunicationThread.h"
 
 #include "parts/display.h"
 #include "parts/speaker.h"
@@ -14,11 +14,11 @@
 #include "parts/rangeSensor.h"
 #include "parts/colorSensorFull.h"
 
-using namespace ev3KitInterpreter::robotModel::real;
+using namespace ev3::robotModel::real;
 using namespace utils::robotCommunication;
-using namespace interpreterBase::robotModel;
+using namespace kitBase::robotModel;
 
-RealRobotModel::RealRobotModel(QString const &kitId, QString const &robotId)
+RealRobotModel::RealRobotModel(const QString &kitId, const QString &robotId)
 	: Ev3RobotModelBase(kitId, robotId)
 	, mRobotCommunicator(new RobotCommunicator(this))
 {
@@ -33,7 +33,7 @@ QString RealRobotModel::name() const
 
 QString RealRobotModel::friendlyName() const
 {
-	return tr("Real Robot EV3");
+	return tr("Interpretation (USB, Bluetooth)");
 }
 
 bool RealRobotModel::needsConnection() const
@@ -41,9 +41,14 @@ bool RealRobotModel::needsConnection() const
 	return true;
 }
 
+int RealRobotModel::priority() const
+{
+	return 9;  /* After 2D model */
+}
+
 void RealRobotModel::rereadSettings()
 {
-	QString const valueOfCommunication = qReal::SettingsManager::value("Ev3ValueOfCommunication").toString();
+	const QString valueOfCommunication = qReal::SettingsManager::value("Ev3ValueOfCommunication").toString();
 	if (valueOfCommunication == mLastCommunicationValue) {
 		return;
 	}
@@ -69,7 +74,7 @@ void RealRobotModel::disconnectFromRobot()
 	mRobotCommunicator->disconnect();
 }
 
-robotParts::Device *RealRobotModel::createDevice(PortInfo const &port, DeviceInfo const &deviceInfo)
+robotParts::Device *RealRobotModel::createDevice(const PortInfo &port, const DeviceInfo &deviceInfo)
 {
 	if (deviceInfo.isA(speakerInfo())) {
 		return new parts::Speaker(speakerInfo(), port, *mRobotCommunicator);
