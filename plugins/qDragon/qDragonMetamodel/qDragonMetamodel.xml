@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<metamodel xmlns="http://schema.real.com/schema/" version="1.0.0">
+<metamodel version="1.0.0" xmlns="http://schema.real.com/schema/">
     <namespace>UML 2.0</namespace>
-    <diagram nodeName="QDragonDiagram" name="QDragonMetaEditor">
+    <diagram name="QDragonMetaEditor" nodeName="QDragonDiagram">
         <graphicTypes>
-            <node name="QDragonDiagram" description="Диаграмма ДРАКОН для описания программы" displayedName="NewDragon Diagram">
+            <node description="Диаграмма ДРАКОН для описания программы" name="QDragonDiagram" displayedName="NewDragon Diagram">
                 <graphics>
                     <picture sizex="182" sizey="132">
-                        <rectangle fill-style="none" fill="#ffffff" stroke="#000000" y1="0" stroke-style="solid" y2="130" x1="0" x2="180" stroke-width="0"/>
+                        <rectangle stroke-style="solid" fill-style="none" y1="0" y2="130" stroke-width="0" x1="0" stroke="#000000" x2="180" fill="#ffffff"/>
                     </picture>
                     <labels/>
                     <ports/>
@@ -16,15 +16,17 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Header" description="Заголовок" displayedName="Header">
+            <node description="Заголовок" name="Header" displayedName="Header">
                 <graphics>
-                    <picture sizex="198" sizey="60">
-                        <ellipse fill-style="none" fill="#ffffff" stroke="#000000" y1="0" stroke-style="solid" y2="58" x1="0" x2="196" stroke-width="0"/>
+                    <picture sizex="197" sizey="63">
+                        <ellipse stroke-style="solid" fill-style="none" y1="0" y2="57" stroke-width="0" stroke="#000000" x1="0" x2="195" fill="#ffffff"/>
                     </picture>
                     <labels>
                         <label textBinded="headerText" x="39" y="20"/>
                     </labels>
-                    <ports/>
+                    <ports>
+                        <pointPort type="NonTyped" x="104" y="60"/>
+                    </ports>
                 </graphics>
                 <logic>
                     <container/>
@@ -40,14 +42,438 @@
                     <shape type="square"/>
                 </graphics>
                 <logic>
-                    <associations beginType="no_arrow" endType="no_arrow">
-                        <association beginName="begin" endName="end"/>
+                    <associations endType="no_arrow" beginType="no_arrow">
+                        <association endName="end" beginName="begin"/>
                     </associations>
                     <fromPorts/>
                     <toPorts/>
                     <explodesTo/>
                 </logic>
             </edge>
+            <node name="End" displayedName="End">
+                <graphics>
+                    <picture sizex="39" sizey="38">
+                        <ellipse stroke-style="solid" fill-style="none" y1="1" y2="36" stroke-width="0" stroke="#000000" x1="0" x2="37" fill="#ffffff"/>
+                    </picture>
+                    <labels/>
+                    <ports>
+                        <pointPort type="NonTyped" x="18" y="2"/>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Action" displayedName="Action">
+                <graphics>
+                    <picture sizex="137" sizey="57">
+                        <rectangle stroke-style="solid" fill-style="none" y1="0" y2="55" stroke-width="0" stroke="#000000" x1="0" x2="135" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="code" x="17" y="12"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="39" starty="-1"/>
+                            <end endx="92" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="42" starty="55"/>
+                            <end endx="95" endy="56"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="code" displayedName="Code"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="If" displayedName="If">
+                <graphics>
+                    <picture sizex="137" sizey="58">
+                        <line stroke-style="solid" fill-style="none" y1="2" y2="27" stroke-width="0" stroke="#000000" x1="33" x2="2" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="56" y2="26" stroke-width="0" stroke="#000000" x1="37" x2="1" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="26" stroke-width="0" stroke="#000000" x1="95" x2="136" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="25" y2="57" stroke-width="0" stroke="#000000" x1="134" x2="97" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="1" stroke-width="0" stroke="#000000" x1="34" x2="97" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="56" y2="57" stroke-width="0" stroke="#000000" x1="94" x2="37" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="condition" x="33" y="18"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="40" starty="0"/>
+                            <end endx="92" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="43" starty="56"/>
+                            <end endx="95" endy="56"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="condition" displayedName="Condition"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Subfunction" displayedName="SubFunction">
+                <graphics>
+                    <picture sizex="136" sizey="57">
+                        <rectangle stroke-style="solid" fill-style="none" y1="0" y2="54" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="53" stroke-width="0" stroke="#000000" x1="11" x2="12" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="53" stroke-width="0" stroke="#000000" x1="121" x2="121" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="funname" x="26" y="14"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="40" starty="0"/>
+                            <end endx="92" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="42" starty="55"/>
+                            <end endx="94" endy="55"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="funname" displayedName="Name of function"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="BranchTo" displayedName="Branch To">
+                <graphics>
+                    <picture sizex="136" sizey="81">
+                        <line stroke-style="solid" fill-style="none" y1="2" y2="31" stroke-width="0" stroke="#000000" x1="64" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="27" y2="4" stroke-width="0" stroke="#000000" x1="1" x2="63" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="79" y2="29" stroke-width="0" stroke="#000000" x1="0" x2="0" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="78" y2="34" stroke-width="0" stroke="#000000" x1="134" x2="135" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="79" y2="79" stroke-width="0" stroke="#000000" x1="1" x2="134" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="branchname" x="18" y="41"/>
+                    </labels>
+                    <ports>
+                        <pointPort type="NonTyped" x="63" y="2"/>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="branchname" displayedName="Name of branch"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="BranchName" displayedName="Branch Name">
+                <graphics>
+                    <picture sizex="137" sizey="86">
+                        <line stroke-style="solid" fill-style="none" y1="56" y2="85" stroke-width="0" stroke="#000000" x1="1" x2="71" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="83" y2="58" stroke-width="0" stroke="#000000" x1="72" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="54" y2="2" stroke-width="0" stroke="#000000" x1="0" x2="0" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="54" y2="2" stroke-width="0" stroke="#000000" x1="135" x2="136" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="1" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="branchname" x="17" y="13"/>
+                    </labels>
+                    <ports>
+                        <pointPort type="NonTyped" x="72" y="83"/>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="branchname" displayedName="Name of branch"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Switch" displayedName="Switch">
+                <graphics>
+                    <picture sizex="158" sizey="51">
+                        <line stroke-style="solid" fill-style="none" y1="47" y2="3" stroke-width="0" stroke="#000000" x1="1" x2="22" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="1" stroke-width="0" stroke="#000000" x1="23" x2="157" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="49" y2="50" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="47" y2="3" stroke-width="0" stroke="#000000" x1="135" x2="156" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="varname" x="30" y="16"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="50" starty="-1"/>
+                            <end endx="125" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="32" starty="48"/>
+                            <end endx="107" endy="49"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="varname" displayedName="Name of variable"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Case" displayedName="Case">
+                <graphics>
+                    <picture sizex="137" sizey="86">
+                        <line stroke-style="solid" fill-style="none" y1="56" y2="85" stroke-width="0" stroke="#000000" x1="1" x2="71" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="82" y2="59" stroke-width="0" stroke="#000000" x1="72" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="53" y2="3" stroke-width="0" stroke="#000000" x1="0" x2="0" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="53" y2="3" stroke-width="0" stroke="#000000" x1="135" x2="136" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="1" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="54" y2="55" stroke-width="0" stroke="#000000" x1="0" x2="136" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="varvalue" x="17" y="13"/>
+                    </labels>
+                    <ports>
+                        <pointPort type="NonTyped" x="72" y="83"/>
+                        <linePort type="NonTyped">
+                            <start startx="30" starty="0"/>
+                            <end endx="102" endy="0"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="varvalue" displayedName="Value of variable"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="To" displayedName="To">
+                <graphics>
+                    <picture sizex="166" sizey="56">
+                        <line stroke-style="solid" fill-style="none" y1="3" y2="33" stroke-width="0" stroke="#000000" x1="136" x2="165" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="36" y2="54" stroke-width="0" stroke="#000000" x1="163" x2="138" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="52" y2="3" stroke-width="0" stroke="#000000" x1="1" x2="1" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="54" y2="55" stroke-width="0" stroke="#000000" x1="135" x2="3" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="1" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="signal" x="18" y="17"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="37" starty="-1"/>
+                            <end endx="107" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="38" starty="53"/>
+                            <end endx="108" endy="54"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="signal" displayedName="Name of signal"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="From" displayedName="From">
+                <graphics>
+                    <picture sizex="138" sizey="57">
+                        <line stroke-style="solid" fill-style="none" y1="4" y2="32" stroke-width="0" stroke="#000000" x1="134" x2="115" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="33" y2="55" stroke-width="0" stroke="#000000" x1="112" x2="137" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="52" y2="5" stroke-width="0" stroke="#000000" x1="1" x2="1" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="55" y2="56" stroke-width="0" stroke="#000000" x1="134" x2="4" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="1" y2="2" stroke-width="0" stroke="#000000" x1="0" x2="134" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="signal" x="18" y="18"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="37" starty="0"/>
+                            <end endx="106" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="38" starty="54"/>
+                            <end endx="107" endy="54"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="signal" displayedName="Name of signal"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Delay" displayedName="Delay">
+                <graphics>
+                    <picture sizex="96" sizey="35">
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="0" stroke-width="0" stroke="#000000" x1="0" x2="94" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="34" stroke-width="0" stroke="#000000" x1="1" x2="27" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="1" y2="34" stroke-width="0" stroke="#000000" x1="94" x2="74" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="33" y2="33" stroke-width="0" stroke="#000000" x1="27" x2="74" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="time" x="35" y="7"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="26" starty="-1"/>
+                            <end endx="67" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="30" starty="32"/>
+                            <end endx="71" endy="33"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="int" name="time" displayedName="Amount  of delay">
+                            <default>0</default>
+                        </property>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Empty" displayedName="Empty">
+                <graphics>
+                    <picture sizex="139" sizey="83">
+                        <rectangle stroke-style="solid" fill-style="solid" y1="0" y2="81" stroke-width="0" stroke="#000000" x1="0" x2="137" fill="#808080"/>
+                        <ellipse stroke-style="solid" fill-style="solid" y1="7" y2="75" stroke-width="0" stroke="#000000" x1="18" x2="114" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="text" x="46" y="30"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="24" starty="-1"/>
+                            <end endx="107" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="27" starty="81"/>
+                            <end endx="110" endy="82"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="text" displayedName="Text"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="Paralel" displayedName="Paralel">
+                <graphics>
+                    <picture sizex="95" sizey="66">
+                        <rectangle stroke-style="solid" fill-style="none" y1="4" y2="56" stroke-width="0" stroke="#000000" x1="0" x2="93" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="31" y2="31" stroke-width="0" stroke="#000000" x1="14" x2="79" fill="#ffffff"/>
+                        <rectangle stroke-style="solid" fill-style="none" y1="12" y2="11" stroke-width="0" stroke="#000000" x1="66" x2="65" fill="#ffffff"/>
+                        <curve stroke-style="solid" fill-style="none" stroke-width="0" stroke="#000000" fill="#ffffff">
+                            <start startx="77" starty="15"/>
+                            <end endx="76" endy="50"/>
+                            <ctrl x="28" y="30"/>
+                        </curve>
+                    </picture>
+                    <labels/>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="15" starty="4"/>
+                            <end endx="75" endy="4"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="17" starty="57"/>
+                            <end endx="77" endy="57"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="ForBegin" displayedName="For Begin">
+                <graphics>
+                    <picture sizex="155" sizey="36">
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="0" stroke-width="0" stroke="#000000" x1="25" x2="126" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="2" y2="34" stroke-width="0" stroke="#000000" x1="25" x2="2" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="2" y2="34" stroke-width="0" stroke="#000000" x1="126" x2="153" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="34" y2="34" stroke-width="0" stroke="#000000" x1="0" x2="154" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="##var## = ##init##" x="20" y="6"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="52" starty="0"/>
+                            <end endx="104" endy="0"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="48" starty="34"/>
+                            <end endx="100" endy="34"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="string" name="var" displayedName="Variable"/>
+                        <property type="int" name="init" displayedName="Initial value"/>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
+            <node name="ForEnd" displayedName="For End">
+                <graphics>
+                    <picture sizex="155" sizey="32">
+                        <line stroke-style="solid" fill-style="none" y1="30" y2="30" stroke-width="0" stroke="#000000" x1="30" x2="131" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="29" y2="3" stroke-width="0" stroke="#000000" x1="29" x2="3" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="30" y2="2" stroke-width="0" stroke="#000000" x1="133" x2="153" fill="#ffffff"/>
+                        <line stroke-style="solid" fill-style="none" y1="0" y2="0" stroke-width="0" stroke="#000000" x1="0" x2="154" fill="#ffffff"/>
+                    </picture>
+                    <labels>
+                        <label textBinded="+ ##step##" x="43" y="5"/>
+                    </labels>
+                    <ports>
+                        <linePort type="NonTyped">
+                            <start startx="50" starty="29"/>
+                            <end endx="101" endy="30"/>
+                        </linePort>
+                        <linePort type="NonTyped">
+                            <start startx="44" starty="-1"/>
+                            <end endx="95" endy="0"/>
+                        </linePort>
+                    </ports>
+                </graphics>
+                <logic>
+                    <container/>
+                    <properties>
+                        <property type="int" name="step" displayedName="Step">
+                            <default>0</default>
+                        </property>
+                    </properties>
+                    <explodesTo/>
+                </logic>
+            </node>
         </graphicTypes>
     </diagram>
 </metamodel>
