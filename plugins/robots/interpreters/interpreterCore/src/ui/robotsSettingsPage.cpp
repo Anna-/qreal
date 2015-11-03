@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "robotsSettingsPage.h"
 #include "ui_robotsSettingsPage.h"
 
@@ -15,14 +29,15 @@ using namespace interpreterCore::ui;
 using namespace kitBase;
 using namespace qReal;
 
-RobotsSettingsPage::RobotsSettingsPage(
-		KitPluginManager &kitPluginManager
+RobotsSettingsPage::RobotsSettingsPage(KitPluginManager &kitPluginManager
 		, RobotModelManager &robotModelManager
+		, LogicalModelAssistInterface &logicalModel
 		, QWidget *parent)
 	: PreferencesPage(parent)
 	, mUi(new Ui::PreferencesRobotSettingsPage)
 	, mKitPluginManager(kitPluginManager)
 	, mRobotModelManager(robotModelManager)
+	, mLogicalModel(logicalModel)
 {
 	setWindowIcon(QIcon(":/icons/preferences/robot.svg"));
 	mUi->setupUi(this);
@@ -104,9 +119,6 @@ QButtonGroup *RobotsSettingsPage::initializeRobotModelsButtons(const QString &ki
 void RobotsSettingsPage::save()
 {
 	saveSelectedRobotModel();
-	SettingsManager::setValue("enableNoiseOfSensors", mUi->enableSensorNoiseCheckBox->isChecked());
-	SettingsManager::setValue("enableNoiseOfEngines", mUi->enableEnginesNoiseCheckBox->isChecked());
-	SettingsManager::setValue("approximationLevel", mUi->approximationLevelSpinBox->value());
 	SettingsManager::setValue("sensorUpdateInterval", mUi->sensorUpdateSpinBox->value());
 	SettingsManager::setValue("autoscalingInterval", mUi->autoScalingSpinBox->value());
 	SettingsManager::setValue("textUpdateInterval", mUi->textUpdaterSpinBox->value());
@@ -142,10 +154,6 @@ void RobotsSettingsPage::restoreSettings()
 		checkSelectedRobotModelButtonFor(selectedKitButton);
 	}
 
-	mUi->enableSensorNoiseCheckBox->setChecked(SettingsManager::value("enableNoiseOfSensors").toBool());
-	mUi->enableEnginesNoiseCheckBox->setChecked(SettingsManager::value("enableNoiseOfEngines").toBool());
-	mUi->approximationLevelSpinBox->setValue(SettingsManager::value("approximationLevel").toInt());
-
 	const int sensorsUpdateDefault = utils::sensorsGraph::SensorsGraph::readSensorDefaultInterval;
 	const int autoscalingDefault = utils::sensorsGraph::SensorsGraph::autoscalingDefault;
 	const int textUpdateDefault = utils::sensorsGraph::SensorsGraph::textUpdateDefault;
@@ -167,6 +175,12 @@ void RobotsSettingsPage::restoreSettings()
 			}
 		}
 	}
+}
+
+void RobotsSettingsPage::onProjectOpened()
+{
+	mUi->devicesConfigurer->setEnabled(
+			!mLogicalModel.logicalRepoApi().metaInformation("twoDModelSensorsReadOnly").toBool());
 }
 
 void RobotsSettingsPage::changeEvent(QEvent *e)

@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "embeddedLinker.h"
 
 #include <math.h>
@@ -23,11 +37,13 @@ EmbeddedLinker::EmbeddedLinker()
 	if (mSize > 10) {
 		mSize *= 0.75;
 	}
+
 	mIndent = SettingsManager::value("EmbeddedLinkerIndent").toFloat();
 	mIndent *= 0.8;
 	if (mIndent > 17) {
 		mIndent *= 0.7;
 	}
+
 	mRectangle = QRectF(-mSize, -mSize, mSize * 2, mSize * 2);
 	mInnerRectangle = QRectF(-mSize / 2, -mSize / 2, mSize, mSize);
 	setZValue(300);
@@ -73,6 +89,7 @@ void EmbeddedLinker::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	if (mSize > 10) {
 		mSize *= 0.75;
 	}
+
 	mRectangle = QRectF(-mSize, -mSize, mSize * 2, mSize * 2);
 	mInnerRectangle = QRectF(-mSize / 2, -mSize / 2, mSize, mSize);
 
@@ -224,6 +241,7 @@ void EmbeddedLinker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		if (!scene) {
 			return;
 		}
+
 		const QString type = "qrm:/" + mMaster->id().editor() + "/" +
 							 mMaster->id().diagram() + "/" + mEdgeType.element();
 		if (scene->editorManager().hasElement(Id::loadFromString(type))) {
@@ -264,7 +282,7 @@ void EmbeddedLinker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 			result = scene->launchEdgeMenu(mEdge, mMaster, eScenePos, false, &createElementFromMenuCommand);
 		} else {
 			bool canBeConnected = false;
-			foreach(const PossibleEdge &pEdge, mEdge->src()->getPossibleEdges()) {
+			for (const PossibleEdge &pEdge : mEdge->src()->getPossibleEdges()) {
 				if (pEdge.first.second.element() == under->id().element()) {
 					canBeConnected = true;
 					break;
@@ -288,6 +306,7 @@ void EmbeddedLinker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 				}
 			}
 		}
+
 		NodeElement *target = dynamic_cast<NodeElement*>(scene->lastCreatedFromLinker());
 
 		if (result == -1) {
@@ -322,7 +341,7 @@ void EmbeddedLinker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 			}
 		}
 	}
+
 	mPressed = false;
 	mEdge = nullptr;
 }
-

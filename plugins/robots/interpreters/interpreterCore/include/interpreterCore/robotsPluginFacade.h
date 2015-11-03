@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group, Dmitry Mordvinov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QObject>
@@ -19,6 +33,9 @@
 
 namespace interpreterCore {
 
+class ExerciseExportManager;
+class UiManager;
+
 namespace ui {
 class RobotsSettingsPage;
 }
@@ -30,7 +47,6 @@ class RobotsPluginFacade : public QObject
 
 public:
 	RobotsPluginFacade();
-
 	~RobotsPluginFacade() override;
 
 	/// Inits all sybsytems of robots plugin infrastructure that somehow depend from engine`s parts.
@@ -46,8 +62,11 @@ public:
 	ActionsManager &actionsManager();
 
 	/// A convenience method that travels around all loaded kit plugins,
-	/// collects all non-empty default settings file pathes and returns them.
+	/// collects all non-empty default settings file paths and returns them.
 	QStringList defaultSettingsFiles() const;
+
+	/// Returns a helper object for convenient 2D model interface scripting.
+	QObject *guiScriptFacade() const;
 
 	/// Returns diagram interpter`s management interface.
 	interpreter::InterpreterInterface &interpreter() const;
@@ -88,13 +107,13 @@ private:
 	RobotModelManager mRobotModelManager;
 	ActionsManager mActionsManager;
 	QScopedPointer<DevicesConfigurationManager> mDevicesConfigurationManager;
+	QScopedPointer<ExerciseExportManager> mSaveAsTaskManager;
+	QScopedPointer<UiManager> mUiManager;
 
 	kitBase::DevicesConfigurationWidget *mDockDevicesConfigurer;  // Does not have ownership
 	utils::WatchListWindow *mWatchListWindow;  // Does not have ownership
 	GraphicsWatcherManager *mGraphicsWatcherManager;  // Has ownership
-
 	BlocksFactoryManager mBlocksFactoryManager;
-
 	kitBase::EventsForKitPluginInterface mEventsForKitPlugin;
 };
 

@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "interpreterCore/managers/devicesConfigurationManager.h"
 
 #include <QtXml/QDomDocument>
@@ -10,19 +24,23 @@ using namespace kitBase;
 using namespace robotModel;
 using namespace qReal;
 
+const QString diagramName = "RobotsDiagramNode";
+
 DevicesConfigurationManager::DevicesConfigurationManager(
 		qReal::GraphicalModelAssistInterface &graphicalModelAssistInterface
 		, qReal::LogicalModelAssistInterface &logicalModelAssistInterface
 		, qReal::gui::MainWindowInterpretersInterface &mainWindowInterpretersInterface
-		, qReal::SystemEvents &systemEvents
+		, qReal::ProjectManagementInterface &projectManager
 		)
 	: DevicesConfigurationProvider("DevicesConfigurationManager")
 	, mGraphicalModelAssistInterface(graphicalModelAssistInterface)
 	, mLogicalModelAssistInterface(logicalModelAssistInterface)
 	, mMainWindowInterpretersInterface(mainWindowInterpretersInterface)
 {
-	QObject::connect(&systemEvents, &qReal::SystemEvents::activeTabChanged
-			, [&] (const TabInfo &info) { this->onActiveTabChanged(info); });
+	connect(&projectManager, &qReal::ProjectManagementInterface::afterOpen
+			, this, &DevicesConfigurationManager::onOpenedProjectChanged);
+	connect(&projectManager, &qReal::ProjectManagementInterface::closed
+			, this, &DevicesConfigurationManager::onOpenedProjectChanged);
 }
 
 QString DevicesConfigurationManager::save() const
@@ -78,13 +96,13 @@ void DevicesConfigurationManager::onDeviceConfigurationChanged(const QString &ro
 	mLogicalModelAssistInterface.setPropertyByRoleName(logicalRootId, save(), "devicesConfiguration");
 }
 
-void DevicesConfigurationManager::onActiveTabChanged(const TabInfo &info)
+void DevicesConfigurationManager::onOpenedProjectChanged()
 {
-	if (info.type() != TabInfo::TabType::editor) {
+	const Id logicalRootId = mGraphicalModelAssistInterface.logicalId(mMainWindowInterpretersInterface.activeDiagram());
+	if (logicalRootId.element() != diagramName) {
 		return;
 	}
 
-	const Id logicalRootId = mGraphicalModelAssistInterface.logicalId(info.rootDiagramId());
 	const QString devicesConfiguration = logicalRootId.isNull()
 			? QString()
 			: mLogicalModelAssistInterface.propertyByRoleName(logicalRootId, "devicesConfiguration").toString();

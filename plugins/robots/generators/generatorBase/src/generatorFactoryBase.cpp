@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "generatorBase/generatorFactoryBase.h"
 #include "generatorBase/generatorCustomizer.h"
 
@@ -11,6 +25,7 @@
 #include "simpleGenerators/whileLoopGenerator.h"
 #include "simpleGenerators/forkCallGenerator.h"
 #include "simpleGenerators/joinGenerator.h"
+#include "simpleGenerators/killThreadGenerator.h"
 #include "simpleGenerators/switchGenerator.h"
 #include "simpleGenerators/functionElementGenerator.h"
 #include "simpleGenerators/enginesGenerator.h"
@@ -37,8 +52,10 @@
 #include "simpleGenerators/labelGenerator.h"
 #include "simpleGenerators/gotoSimpleGenerator.h"
 #include "simpleGenerators/variableInitGenerator.h"
+#include "simpleGenerators/randomInitGenerator.h"
 #include "simpleGenerators/sendMessageThreadsGenerator.h"
 #include "simpleGenerators/receiveMessageThreadsGenerator.h"
+#include "simpleGenerators/getButtonCodeGenerator.h"
 
 #include "converters/nameNormalizerConverter.h"
 #include "converters/inequalitySignConverter.h"
@@ -86,10 +103,10 @@ GeneratorFactoryBase::~GeneratorFactoryBase()
 
 void GeneratorFactoryBase::initialize()
 {
-	mLuaTranslator.setPathToTemplates(pathToTemplates());
+	mLuaTranslator.setPathsToTemplates(pathsToTemplates());
 	initVariables();
 	initSubprograms();
-	mThreads = new parts::Threads(pathToTemplates());
+	mThreads = new parts::Threads(pathsToTemplates());
 	initEngines();
 	initSensors();
 	initFunctions();
@@ -104,28 +121,28 @@ void GeneratorFactoryBase::setMainDiagramId(const Id &diagramId)
 
 void GeneratorFactoryBase::initVariables()
 {
-	mVariables = new parts::Variables(pathToTemplates(), mRobotModelManager.model(), mLuaTranslator.toolbox());
+	mVariables = new parts::Variables(pathsToTemplates(), mRobotModelManager.model(), mLuaTranslator.toolbox());
 }
 
 void GeneratorFactoryBase::initSubprograms()
 {
 	mSubprograms = new parts::Subprograms(mRepo, mErrorReporter
-			, pathToTemplates(), nameNormalizerConverter());
+			, pathsToTemplates(), nameNormalizerConverter());
 }
 
 void GeneratorFactoryBase::initEngines()
 {
-	mEngines = new parts::Engines(pathToTemplates(), portNameConverter(), enginesConverter());
+	mEngines = new parts::Engines(pathsToTemplates(), portNameConverter(), enginesConverter());
 }
 
 void GeneratorFactoryBase::initSensors()
 {
-	mSensors = new parts::Sensors(pathToTemplates(), portNameConverter());
+	mSensors = new parts::Sensors(pathsToTemplates(), portNameConverter());
 }
 
 void GeneratorFactoryBase::initFunctions()
 {
-	mFunctions = new parts::Functions(pathToTemplates());
+	mFunctions = new parts::Functions(pathsToTemplates());
 }
 
 void GeneratorFactoryBase::initDeviceVariables()
@@ -284,10 +301,16 @@ AbstractSimpleGenerator *GeneratorFactoryBase::simpleGenerator(const qReal::Id &
 		return new SubprogramsSimpleGenerator(mRepo, customizer, id, this);
 	} else if (elementType == "VariableInit") {
 		return new VariableInitGenerator(mRepo, customizer, id, this);
+	} else if (elementType == "Randomizer") {
+		return new RandomInitGenerator(mRepo, customizer, id, this);
 	} else if (elementType == "SendMessageThreads") {
 		return new SendMessageThreadsGenerator(mRepo, customizer, id, this);
 	} else if (elementType == "ReceiveMessageThreads") {
 		return new ReceiveMessageThreadsGenerator(mRepo, customizer, id, this);
+	} else if (elementType == "KillThread") {
+		return new KillThreadGenerator(mRepo, customizer, id, this);
+	} else if (elementType == "GetButtonCode") {
+		return new GetButtonCodeGenerator(mRepo, customizer, id, this);
 	}
 
 	return new NullGenerator(mRepo, customizer, id, this);
@@ -327,7 +350,7 @@ AbstractSimpleGenerator *GeneratorFactoryBase::finalNodeGenerator(const qReal::I
 
 Binding::ConverterInterface *GeneratorFactoryBase::intPropertyConverter(const Id &id, const QString &property) const
 {
-	return new converters::IntPropertyConverter(pathToTemplates(), mLuaTranslator, id
+	return new converters::IntPropertyConverter(pathsToTemplates(), mLuaTranslator, id
 			, property, reservedVariableNameConverter(), typeConverter());
 }
 
@@ -339,7 +362,7 @@ Binding::ConverterInterface *GeneratorFactoryBase::floatPropertyConverter(const 
 Binding::ConverterInterface *GeneratorFactoryBase::boolPropertyConverter(const Id &id
 		, const QString &property, bool needInverting) const
 {
-	return new converters::BoolPropertyConverter(pathToTemplates(), mLuaTranslator
+	return new converters::BoolPropertyConverter(pathsToTemplates(), mLuaTranslator
 			, id, property, reservedVariableNameConverter(), needInverting);
 }
 
@@ -351,7 +374,7 @@ Binding::ConverterInterface *GeneratorFactoryBase::stringPropertyConverter(const
 
 Binding::ConverterInterface *GeneratorFactoryBase::reservedVariableNameConverter() const
 {
-	return new converters::ReservedVariablesConverter(pathToTemplates()
+	return new converters::ReservedVariablesConverter(pathsToTemplates()
 			, mErrorReporter
 			, mRobotModelManager.model()
 			, currentConfiguration()
@@ -372,7 +395,7 @@ Binding::ConverterInterface *GeneratorFactoryBase::functionBlockConverter(const 
 
 Binding::ConverterInterface *GeneratorFactoryBase::inequalitySignConverter() const
 {
-	return new converters::InequalitySignConverter(pathToTemplates());
+	return new converters::InequalitySignConverter(pathsToTemplates());
 }
 
 Binding::MultiConverterInterface *GeneratorFactoryBase::enginesConverter() const
@@ -382,22 +405,24 @@ Binding::MultiConverterInterface *GeneratorFactoryBase::enginesConverter() const
 
 Binding::ConverterInterface *GeneratorFactoryBase::portNameConverter() const
 {
-	return new converters::PortNameConverter(pathToTemplates(), mRobotModelManager.model().availablePorts());
+	return new converters::PortNameConverter(pathsToTemplates()
+			, mRobotModelManager.model().availablePorts()
+			, mErrorReporter);
 }
 
 Binding::ConverterInterface *GeneratorFactoryBase::breakModeConverter() const
 {
-	return new converters::BreakModeConverter(pathToTemplates());
+	return new converters::BreakModeConverter(pathsToTemplates());
 }
 
 Binding::ConverterInterface *GeneratorFactoryBase::typeConverter() const
 {
-	return new converters::TypeConverter(pathToTemplates());
+	return new converters::TypeConverter(pathsToTemplates());
 }
 
 Binding::ConverterInterface *GeneratorFactoryBase::switchConditionsMerger(const QStringList &values) const
 {
-	return new converters::SwitchConditionsMerger(pathToTemplates(), reservedVariableNameConverter(), values);
+	return new converters::SwitchConditionsMerger(pathsToTemplates(), reservedVariableNameConverter(), values);
 }
 
 QString GeneratorFactoryBase::initCode()

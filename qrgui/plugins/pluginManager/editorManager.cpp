@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "editorManager.h"
 
 #include <QtCore/QCoreApplication>
@@ -5,6 +19,7 @@
 
 #include <qrkernel/ids.h>
 #include <qrkernel/logging.h>
+#include <qrkernel/platformInfo.h>
 #include <qrkernel/exception/exception.h>
 #include <qrrepo/repoApi.h>
 
@@ -13,9 +28,25 @@
 
 using namespace qReal;
 
+EditorManager::EditorManager(const QString &path)
+	: mPluginManager(path)
+{
+	init();
+}
+
 EditorManager::EditorManager(QObject *parent)
 	: QObject(parent)
-	, mPluginManager(PluginManager(qApp->applicationDirPath(), "plugins/editors"))
+	, mPluginManager(PlatformInfo::invariantSettingsPath("pathToEditorPlugins"))
+{
+	init();
+}
+
+EditorManager::~EditorManager()
+{
+	qDeleteAll(mPluginIface);
+}
+
+void EditorManager::init()
 {
 	const auto pluginsList = mPluginManager.loadAllPlugins<EditorInterface>();
 
@@ -28,11 +59,6 @@ EditorManager::EditorManager(QObject *parent)
 			mPluginIface[iEditor->id()] = iEditor;
 		}
 	}
-}
-
-EditorManager::~EditorManager()
-{
-	qDeleteAll(mPluginIface);
 }
 
 QString EditorManager::loadPlugin(const QString &pluginName)
@@ -54,7 +80,23 @@ QString EditorManager::loadPlugin(const QString &pluginName)
 
 QString EditorManager::unloadPlugin(const QString &pluginName)
 {
-	const QString resultOfUnloading = mPluginManager.unloadPlugin(mPluginFileName[pluginName]);
+	QString resultOfUnloading = "";
+	if (!mPluginFileName[pluginName].isEmpty()) {
+		resultOfUnloading = mPluginManager.unloadPlugin(mPluginFileName[pluginName]);
+	} else {
+		const QList<QString> namesOfPlugins = mPluginManager.namesOfPlugins();
+		const QString tempName = pluginName.toLower();
+		QString newPluginName = "";
+
+		for (const QString &element : namesOfPlugins) {
+			if (element.contains(tempName) && !element.contains(".a")) {
+				newPluginName = element;
+				break;
+			}
+		}
+
+		resultOfUnloading = mPluginManager.unloadPlugin(newPluginName);
+	}
 
 	if (mPluginIface.keys().contains(pluginName)) {
 		mPluginIface.remove(pluginName);
@@ -189,7 +231,7 @@ QString EditorManager::propertyDescription(const Id &id, const QString &property
 {
 	Q_ASSERT(mPluginsLoaded.contains(id.editor()));
 
-	if (id.idSize() != 4) {
+	if (id.idSize() < 3) {
 		return "";
 	}
 	return mPluginIface[id.editor()]->propertyDescription(id.diagram(), id.element(), propertyName);
@@ -648,6 +690,18 @@ IdList EditorManager::propertiesWithTheSameName(const Id &id, const QString &pro
 	Q_UNUSED(propertyCurrentName);
 	Q_UNUSED(propertyNewName);
 	return IdList();
+}
+
+void EditorManager::updateGenerationRule(const Id &id, const QString &newRule) const
+{
+	Q_UNUSED(id);
+	Q_UNUSED(newRule);
+}
+
+QString EditorManager::generationRule(const Id &id) const
+{
+	Q_UNUSED(id);
+	return QString();
 }
 
 QStringList EditorManager::getPropertiesInformation(const Id &id) const

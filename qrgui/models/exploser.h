@@ -1,7 +1,18 @@
-#pragma once
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 
-#include <QtCore/QList>
-#include <QtWidgets/QTreeWidgetItem>
+#pragma once
 
 #include <qrkernel/ids.h>
 
@@ -70,7 +81,7 @@ signals:
 	/// Emitted each time when automatically created explosion target was removed
 	void explosionTargetRemoved();
 
-	/// @todo: Emit it exaclty when explosions set changes.
+	/// @todo: Emit it exactly when explosions set changes.
 	/// Emitted when explosions set potentially changes (when elements are added or removed
 	/// or renamed or explosion link was added or edited directly).
 	void explosionsSetCouldChange();
@@ -90,8 +101,6 @@ private:
 	/// Recursively travels through the explosions tree and puts all elements
 	/// ids into @param targetIds
 	void explosionsHierarchyPrivate(const Id &currentId, IdList &targetIds) const;
-
-	void refreshPalette(gui::PaletteTreeWidget * const tree, const Id &diagram);
 
 	void connectCommand(const commands::AbstractCommand *command) const;
 

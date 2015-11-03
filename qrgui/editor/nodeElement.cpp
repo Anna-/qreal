@@ -1,6 +1,21 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "nodeElement.h"
 
 #include <QtCore/QUuid>
+#include <QtCore/QtMath>
 #include <QtWidgets/QStyle>
 #include <QtWidgets/QStyleOptionGraphicsItem>
 #include <QtWidgets/QMessageBox>
@@ -16,7 +31,8 @@
 #include <qrgui/models/commands/renameCommand.h>
 #include <qrgui/plugins/editorPluginInterface/editorInterface.h>
 
-#include "editor/labelFactory.h"
+#include "editor/labels/label.h"
+#include "editor/labels/labelFactory.h"
 #include "editor/editorViewScene.h"
 #include "editor/ports/portFactory.h"
 
@@ -44,7 +60,6 @@ NodeElement::NodeElement(ElementImpl *impl
 	, mIsExpanded(false)
 	, mIsFolded(false)
 	, mLeftPressed(false)
-	, mParentNodeElement(nullptr)
 	, mPos(QPointF(0,0))
 	, mSelectionNeeded(false)
 	, mConnectionInProgress(false)
@@ -80,10 +95,6 @@ NodeElement::NodeElement(ElementImpl *impl
 	mSwitchGridAction.setCheckable(true);
 	connect(&mSwitchGridAction, SIGNAL(toggled(bool)), this, SLOT(switchGrid(bool)));
 
-	foreach (QString bonusField, mElementImpl->bonusContextMenuFields()) {
-		mBonusContextMenuActions.push_back(new ContextMenuAction(bonusField, this));
-	}
-
 	mGrid = new SceneGridHandler(this);
 	switchGrid(SettingsManager::value("ActivateGrid").toBool());
 
@@ -101,7 +112,6 @@ NodeElement::~NodeElement()
 	deleteGuides();
 	qDeleteAll(mLabels);
 	delete mElementImpl;
-	qDeleteAll(mBonusContextMenuActions);
 	delete mGrid;
 	delete mPortHandler;
 }
@@ -169,7 +179,7 @@ void NodeElement::setGeometry(const QRectF &geom)
 
 void NodeElement::setPos(const QPointF &pos)
 {
-	if (std::isnan(pos.x()) || std::isnan(pos.y())) {
+	if (qIsNaN(pos.x()) || qIsNaN(pos.y())) {
 		setPos(QPointF());
 		mContents.moveTo(QPointF());
 		storeGeometry();
@@ -248,17 +258,6 @@ void NodeElement::storeGeometry()
 	if (contents != mGraphicalAssistApi.configuration(id())) { // check if it's been changed
 		mGraphicalAssistApi.setConfiguration(id(), contents);
 	}
-}
-
-QList<ContextMenuAction*> NodeElement::contextMenuActions(const QPointF &pos)
-{
-	Q_UNUSED(pos);
-	QList<ContextMenuAction*> result;
-	result.push_back(&mSwitchGridAction);
-	foreach (ContextMenuAction* action, mBonusContextMenuActions) {
-		result.push_back(action);
-	}
-	return result;
 }
 
 void NodeElement::showAlignment(bool isChecked)
@@ -1153,26 +1152,27 @@ void NodeElement::setSelectionState(const bool selected)
 	Element::setSelectionState(selected);
 }
 
-NodeData& NodeElement::data()
+NodeData NodeElement::data()
 {
-	mData.id = id();
-	mData.logicalId = logicalId();
-	mData.logicalProperties = logicalProperties();
-	mData.graphicalProperties = graphicalProperties();
+	NodeData result;
+	result.id = id();
+	result.logicalId = logicalId();
+	result.logicalProperties = logicalProperties();
+	result.graphicalProperties = graphicalProperties();
 	// new element should not have references to links connected to original source element
-	mData.graphicalProperties["links"] = IdListHelper::toVariant(IdList());
-	mData.pos = mPos;
-	mData.contents = mContents;
-	mData.explosion = mLogicalAssistApi.logicalRepoApi().outgoingExplosion(logicalId());
+	result.graphicalProperties["links"] = IdListHelper::toVariant(IdList());
+	result.pos = mPos;
+	result.contents = mContents;
+	result.explosion = mLogicalAssistApi.logicalRepoApi().outgoingExplosion(logicalId());
 
 	NodeElement *parent = dynamic_cast<NodeElement *>(parentItem());
 	if (parent) {
-		mData.parentId = parent->id();
+		result.parentId = parent->id();
 	} else {
-		mData.parentId = Id::rootId();
+		result.parentId = Id::rootId();
 	}
 
-	return mData;
+	return result;
 }
 
 void NodeElement::resize()

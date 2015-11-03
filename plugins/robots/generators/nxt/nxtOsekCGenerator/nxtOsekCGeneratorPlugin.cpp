@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "nxtOsekCGeneratorPlugin.h"
 
 #include <QtCore/QDir>
@@ -5,6 +19,7 @@
 #include <QtWidgets/QApplication>
 
 #include <qrkernel/settingsManager.h>
+#include <qrkernel/platformInfo.h>
 
 #include "nxtOsekCMasterGenerator.h"
 
@@ -46,8 +61,7 @@ QString NxtOsekCGeneratorPlugin::generatorName() const
 
 bool NxtOsekCGeneratorPlugin::canGenerateTo(const QString &project)
 {
-	const QString cFilePath = QApplication::applicationDirPath() + "/" + defaultFilePath(project);
-	const QFileInfo cFile(cFilePath);
+	const QFileInfo cFile = generationTarget(project);
 	const QFileInfo makeFile(cFile.absolutePath() + "/makefile");
 	if (!cFile.exists() || !makeFile.exists()) {
 		return true;
@@ -101,16 +115,24 @@ QIcon NxtOsekCGeneratorPlugin::iconForFastSelector(const kitBase::robotModel::Ro
 	return QIcon(":/nxt/osek/images/switch-to-nxt-osek-c.svg");
 }
 
+QString NxtOsekCGeneratorPlugin::defaultSettingsFile() const
+{
+	return ":/nxt/osek/defaultSettings.ini";
+}
+
 void NxtOsekCGeneratorPlugin::initActions()
 {
+	mGenerateCodeAction->setObjectName("generateCode");
 	mGenerateCodeAction->setText(tr("Generate code"));
 	mGenerateCodeAction->setIcon(QIcon(":/nxt/osek/images/generateOsekCode.svg"));
 	connect(mGenerateCodeAction, SIGNAL(triggered()), this, SLOT(generateCode()));
 
+	mFlashRobotAction->setObjectName("flashRobot");
 	mFlashRobotAction->setText(tr("Flash robot"));
 	mFlashRobotAction->setIcon(QIcon(":/nxt/osek/images/flashRobot.svg"));
 	connect(mFlashRobotAction, SIGNAL(triggered()), this, SLOT(flashRobot()));
 
+	mUploadProgramAction->setObjectName("uploadProgram");
 	mUploadProgramAction->setText(tr("Upload program"));
 	mUploadProgramAction->setIcon(QIcon(":/nxt/osek/images/run.png"));
 	connect(mUploadProgramAction, SIGNAL(triggered()), this, SLOT(uploadProgram()));
@@ -182,7 +204,8 @@ void NxtOsekCGeneratorPlugin::flashRobot()
 void NxtOsekCGeneratorPlugin::uploadProgram()
 {
 	if (!mNxtToolsPresent) {
-		mMainWindowInterface->errorReporter()->addError(tr("upload.sh not found. Make sure it is present in QReal installation directory"));
+		mMainWindowInterface->errorReporter()->addError(
+				tr("upload.sh not found. Make sure it is present in QReal installation directory"));
 	} else {
 		const QFileInfo fileInfo = generateCodeForProcessing();
 
@@ -194,12 +217,10 @@ void NxtOsekCGeneratorPlugin::uploadProgram()
 
 void NxtOsekCGeneratorPlugin::checkNxtTools()
 {
-	QDir dir(qApp->applicationDirPath());
-	if (!QDir().exists(dir.absolutePath() + "/nxt-tools")) {
+	QDir dir(PlatformInfo::invariantSettingsPath("pathToNxtTools"));
+	if (!dir.exists()) {
 		mNxtToolsPresent = false;
 	} else {
-		dir.cd(dir.absolutePath() + "/nxt-tools");
-
 		QDir gnuarm(dir.absolutePath() + "/gnuarm");
 		QDir nexttool(dir.absolutePath() + "/nexttool");
 		QDir nxtOSEK(dir.absolutePath() + "/nxtOSEK");
@@ -209,13 +230,15 @@ void NxtOsekCGeneratorPlugin::checkNxtTools()
 		QFile upload1(dir.absolutePath() + "/upload.bat");
 		QFile upload2(dir.absolutePath() + "/upload.sh");
 
-		mNxtToolsPresent = gnuarm.exists() && nexttool.exists() && nxtOSEK.exists() && flash.exists() && upload1.exists() && upload2.exists();
+		mNxtToolsPresent = gnuarm.exists() && nexttool.exists() && nxtOSEK.exists() && flash.exists()
+				&& upload1.exists() && upload2.exists();
 #else
 		QDir libnxt(dir.absolutePath() + "/libnxt");
 		QFile flash(dir.absolutePath() + "/flash.sh");
 		QFile upload(dir.absolutePath() + "/upload.sh");
 
-		mNxtToolsPresent = gnuarm.exists() && libnxt.exists() && nexttool.exists() && nxtOSEK.exists() && flash.exists() && upload.exists();
+		mNxtToolsPresent = gnuarm.exists() && libnxt.exists() && nexttool.exists() && nxtOSEK.exists()
+				&& flash.exists() && upload.exists();
 #endif
 	}
 }

@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -65,8 +79,8 @@ private:
 		/// Selects "best available" image file, using following rules:
 		/// - if there is .svg file with given name in a directory from filePath, it is used as actual image file.
 		/// - else if there is a file with other extension but with correct name, it is used.
-		/// - else, if there is no such file, it tries to select a file with name "default" in given directory, using the
-		///   rules above.
+		/// - else, if there is no such file, it tries to select a file with name "default" in given directory, using
+		///   the rules above.
 		/// - if everything above fails, system default image file, from qrgui/icons (or, when compiled,
 		///   from ":/icons/default.svg"), is used.
 		static QFileInfo selectBestImageFile(const QString &filePath);

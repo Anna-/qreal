@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 /** @file nodeElement.h
 *  @brief class for an element object on a diagram
 **/
@@ -63,8 +77,10 @@ public:
 	virtual void paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *w);
 
 	QRectF boundingRect() const;
+
 	/// Current value of mContents
 	QRectF contentsRect() const;
+
 	/// Folded contents of node
 	QRectF foldedContentsRect() const;
 
@@ -80,7 +96,6 @@ public:
 
 	void storeGeometry();
 	virtual void setName(const QString &name, bool withUndoRedo = false);
-	//void shift(const QPointF &pos, EdgeElement* called);
 
 	/// Returns port position relative to the top left corner of NodeElement
 	/// (position of NodeElement).
@@ -109,7 +124,7 @@ public:
 	/// Remove edge from node's edge list, rearrange linear ports
 	void delEdge(EdgeElement *edge);
 
-	NodeData& data();
+	NodeData data();
 
 	virtual bool initPossibleEdges();
 	QList<PossibleEdge> getPossibleEdges();
@@ -121,7 +136,6 @@ public:
 
 	//void resizeChild(const QRectF &newContents, const QRectF &oldContents);
 
-	virtual QList<ContextMenuAction *> contextMenuActions(const QPointF &pos);
 	void switchAlignment(bool isSwitchedOn);
 	void showAlignment(bool isChecked);
 
@@ -292,22 +306,16 @@ private:
 
 	bool mLeftPressed;
 
-	NodeElement *mParentNodeElement;
-
 	QPointF mPos;
 	bool mSelectionNeeded;
 
 	bool mConnectionInProgress;
-
-	QList<ContextMenuAction *> mBonusContextMenuActions;
 
 	SceneGridHandler *mGrid;
 	PortHandler *mPortHandler;
 
 	QGraphicsRectItem *mPlaceholder;
 	NodeElement *mHighlightedNode;
-
-	NodeData mData;
 
 	QImage mRenderedDiagram;
 	QTimer mRenderTimer;

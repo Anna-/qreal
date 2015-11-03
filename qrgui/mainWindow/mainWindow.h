@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group, Dmitry Mordvinov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QSignalMapper>
@@ -6,6 +20,7 @@
 #include <QtWidgets/QSplashScreen>
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QListWidget>
+#include <QtWidgets/QTreeView>
 #include <QtSql/QSqlDatabase>
 
 #include <qrkernel/settingsManager.h>
@@ -15,6 +30,7 @@
 #include "projectManager/projectManagerWrapper.h"
 #include "tabWidget.h"
 #include "startWidget/startWidget.h"
+#include "scriptAPI/scriptAPI.h"
 
 #include <qrgui/plugins/toolPluginInterface/usedInterfaces/mainWindowInterpretersInterface.h>
 #include <qrgui/plugins/toolPluginInterface/usedInterfaces/mainWindowDockInterface.h>
@@ -43,6 +59,7 @@ namespace qReal {
 
 class EditorView;
 class SceneCustomizer;
+class SplashScreen;
 
 namespace models {
 class Models;
@@ -143,14 +160,22 @@ public:
 	/// @param diagram Id of a diagram we need to add elements from.
 	void addEditorElementsToPalette(const Id &editor, const Id &diagram);
 
-	virtual QDockWidget *logicalModelDock() const;
-	virtual QDockWidget *graphicalModelDock() const;
-	virtual QDockWidget *propertyEditorDock() const;
-	virtual QDockWidget *errorReporterDock() const;
-	virtual QDockWidget *paletteDock() const;
+	QDockWidget *logicalModelDock() const override;
+	QDockWidget *graphicalModelDock() const override;
+	QDockWidget *propertyEditorDock() const override;
+	QDockWidget *errorReporterDock() const override;
+	QDockWidget *paletteDock() const override;
+	QStatusBar *statusBar() const override;
+	QList<QToolBar *> toolBars() const override;
 
-	virtual void tabifyDockWidget(QDockWidget *first, QDockWidget *second);
-	virtual void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockWidget);
+	void tabifyDockWidget(QDockWidget *first, QDockWidget *second) override;
+	void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockWidget) override;
+	void addToolBar(Qt::ToolBarArea area, QToolBar * const toolbar) override;
+
+	QByteArray saveState(int version = 0) const override;
+	bool restoreState(const QByteArray &state, int version = 0) override;
+
+	void setCorner(Qt::Corner corner, Qt::DockWidgetArea area) override;
 
 	void setTabText(QWidget *tab, const QString &text) override;
 
@@ -160,6 +185,9 @@ public:
 	void setElementInPaletteEnabled(const Id &metatype, bool enabled) override;
 	void setEnabledForAllElementsInPalette(bool enabled) override;
 	void endPaletteModification() override;
+
+	/// Additional actions for interpreter palette.
+	QList<QAction *> optionalMenuActionsForInterpretedPlugins();
 
 signals:
 	void rootDiagramChanged();
@@ -198,6 +226,7 @@ private slots:
 	/// Diagram opening must happen after plugins initialization
 	void initPluginsAndStartWidget();
 	void initToolPlugins();
+	void customizeActionsVisibility();
 
 	/// handler for menu 'button find' pressed
 	void showFindDialog();
@@ -211,15 +240,16 @@ private slots:
 	void showHelp();
 
 	void fullscreen();
+	void hideBottomDocks();
+
 	void openRecentProjectsMenu();
 
 	void saveDiagramAsAPicture();
-
 	void print();
 	void makeSvg();
 	void showGrid(bool isChecked);
 
-	void sceneSelectionChanged();
+	void sceneSelectionChanged(const QList<Element *> &elements);
 
 	void applySettings();
 	void resetToolbarSize(int size);
@@ -305,7 +335,7 @@ private:
 
 	/// Traverses list of actions and adds buttons to toolbar.
 	/// @param actions - list of actions to traverse
-	void traverseListOfActions(QList<ActionInfo> const &actions);
+	void traverseListOfActions(const QList<ActionInfo> &actions);
 
 	void setIndexesOfPropertyEditor(const Id &id);
 
@@ -336,12 +366,16 @@ private:
 	void initDocks();
 	void initExplorers();
 	void initRecentProjectsMenu();
+	void initScriptAPI();
+	void initActionWidgetsNames();
 	void openStartTab();
 
 	void setVersion(const QString &version);
 
 	Ui::MainWindowUi *mUi;
 	SystemFacade mFacade;
+
+	QScopedPointer<SplashScreen> mSplashScreen;
 
 	/// elements & theirs ids
 	QMap<QString, Id> mElementsNamesAndIds;
@@ -383,8 +417,12 @@ private:
 	QList<QDockWidget *> mAdditionalDocks;
 	QMap<QWidget *, int> mLastTabBarIndexes;
 
+	QList<QAction *> mListOfAdditionalActions; // doesn't have ownership
+
 	/// A field for storing file name passed as console argument
 	QString mInitialFileToOpen;
+
+	gui::ScriptAPI mScriptAPI;
 };
 
 }

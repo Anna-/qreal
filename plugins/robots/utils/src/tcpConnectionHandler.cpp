@@ -1,15 +1,38 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include <utils/tcpConnectionHandler.h>
 
 #include <QtNetwork/QHostAddress>
 
 #include <qrkernel/logging.h>
 
+const int keepaliveTime = 3000;
+
 using namespace utils;
 
 TcpConnectionHandler::TcpConnectionHandler(int port)
 	: mPort(port)
 {
-	QObject::connect(&mSocket, SIGNAL(readyRead()), this, SLOT(onIncomingData()), Qt::DirectConnection);
+	QObject::connect(&mSocket, &QTcpSocket::readyRead, this
+		, &TcpConnectionHandler::onIncomingData, Qt::DirectConnection);
+
+	QObject::connect(&mKeepAliveTimer, &QTimer::timeout, this
+		, &TcpConnectionHandler::keepalive, Qt::DirectConnection);
+
+	mKeepAliveTimer.setInterval(keepaliveTime);
+	mKeepAliveTimer.setSingleShot(false);
 }
 
 bool TcpConnectionHandler::connect(const QHostAddress &serverAddress)
@@ -22,6 +45,8 @@ bool TcpConnectionHandler::connect(const QHostAddress &serverAddress)
 	const bool result = mSocket.waitForConnected(3000);
 	if (!result) {
 		QLOG_ERROR() << mSocket.errorString();
+	} else {
+		mKeepAliveTimer.start();
 	}
 
 	mBuffer.clear();
@@ -50,6 +75,9 @@ void TcpConnectionHandler::send(const QString &data)
 	mSocket.write(dataByteArray);
 	if (!mSocket.waitForBytesWritten(3000)) {
 		QLOG_ERROR() << "Unable to send data" << data << "to" << mSocket.peerAddress();
+	} else {
+		/// Resetting keepalive timer since we already sent something to the other side.
+		mKeepAliveTimer.start();
 	}
 }
 
@@ -83,7 +111,6 @@ void TcpConnectionHandler::onIncomingData()
 			if (mBuffer.size() >= mExpectedBytes) {
 				const QByteArray message = mBuffer.left(mExpectedBytes);
 				mBuffer = mBuffer.mid(mExpectedBytes);
-
 				emit messageReceived(message);
 
 				mExpectedBytes = 0;
@@ -93,4 +120,9 @@ void TcpConnectionHandler::onIncomingData()
 			}
 		}
 	}
+}
+
+void TcpConnectionHandler::keepalive()
+{
+	send("keepalive");
 }

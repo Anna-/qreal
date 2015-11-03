@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "bluetoothRobotCommunicationThread.h"
 
 #include <QtCore/QMetaType>
@@ -7,7 +21,6 @@
 
 #include <qrkernel/settingsManager.h>
 #include <plugins/robots/thirdparty/qextserialport/src/qextserialport.h>
-#include <utils/tracer.h>
 
 #include "src/commandConstants.h"
 
@@ -62,9 +75,6 @@ void BluetoothRobotCommunicationThread::connect()
 
 	mPort->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
 
-	//utils::Tracer::debug(utils::Tracer::initialization, "BluetoothRobotCommunicationThread::connect"
-	//		, "Port " + mPort->portName() + " is open: " + QString("%1").arg(mPort->isOpen()));
-
 	// Sending "Keep alive" command to check connection.
 	keepAlive();
 	const QByteArray response = receive(keepAliveResponseSize);
@@ -105,26 +115,12 @@ void BluetoothRobotCommunicationThread::send(const QByteArray &buffer
 
 void BluetoothRobotCommunicationThread::send(const QByteArray &buffer) const
 {
-	//utils::Tracer::debug(utils::Tracer::robotCommunication, "BluetoothRobotCommunicationThread::send", "Sending:");
-	//for (int i = 0; i < buffer.size(); ++i) {
-	//	utils::Tracer::debug(utils::Tracer::robotCommunication, "BluetoothRobotCommunicationThread::send"
-	//			, QString("Byte %1 %2").arg(i).arg(static_cast<unsigned char>(buffer[i])));
-	//}
-
 	mPort->write(buffer);
 }
 
 QByteArray BluetoothRobotCommunicationThread::receive(int size) const
 {
-	const QByteArray result = mPort->read(size);
-
-	//utils::Tracer::debug(utils::Tracer::robotCommunication, "BluetoothRobotCommunicationThread::receive", "Received:");
-	//for (int i = 0; i < result.size(); ++i) {
-	//	utils::Tracer::debug(utils::Tracer::robotCommunication, "BluetoothRobotCommunicationThread::receive"
-	//			, QString("Byte %1 %2").arg(i).arg(static_cast<unsigned char>(result[i])));
-	//}
-
-	return result;
+	return mPort->read(size);
 }
 
 void BluetoothRobotCommunicationThread::checkForConnection()

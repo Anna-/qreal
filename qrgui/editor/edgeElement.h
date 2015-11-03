@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QList>
@@ -68,10 +82,11 @@ public:
 
 	NodeElement *src() const;
 	NodeElement *dst() const;
-	bool isSrc(const NodeElement *node) const;
-	bool isDst(const NodeElement *node) const;
 	void setSrc(NodeElement *node);
 	void setDst(NodeElement *node);
+
+	/// Returns true if edge is not connected to port from one side (no matter src or dst).
+	bool isHanging() const;
 
 	/// prepare edge to moving from the linker
 	void tuneForLinker();
@@ -104,8 +119,6 @@ public:
 
 	virtual void connectToPort();
 
-	virtual QList<ContextMenuAction*> contextMenuActions(const QPointF &pos);
-
 	QList<PossibleEdge> getPossibleEdges();
 
 	virtual void setColorRect(bool bl);
@@ -114,9 +127,9 @@ public:
 	bool isBreakPointPressed();
 	void breakPointUnpressed();
 
-	void highlight(const QColor color = Qt::red);
+	void highlight(const QColor &color = Qt::red);
 
-	EdgeData& data();
+	EdgeData data();
 
 	/// Change link type and redraw it
 	void changeShapeType(const enums::linkShape::LinkShape shapeType);
@@ -219,8 +232,6 @@ private:
 	ContextMenuAction mChangeShapeAction;
 
 	bool mBreakPointPressed;
-
-	EdgeData mData;
 
 	bool mModelUpdateIsCalled;  // flag for the infinite updateData()-s liquidating
 

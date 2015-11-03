@@ -1,3 +1,17 @@
+# Copyright 2007-2015 QReal Research Group
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 TARGET = qrgui-dialogs
 
 include(../../global.pri)
@@ -11,7 +25,9 @@ includes(qrgui)
 
 DEFINES += QRGUI_DIALOGS_LIBRARY
 
-TRANSLATIONS = $$PWD/../../qrtranslations/ru/qrgui_dialogs_ru.ts
+TRANSLATIONS = \
+	$$PWD/../../qrtranslations/ru/qrgui_dialogs_ru.ts \
+	$$PWD/../../qrtranslations/fr/qrgui_dialogs_fr.ts \
 
 HEADERS += \
 	$$PWD/dialogsDeclSpec.h \
@@ -29,7 +45,6 @@ HEADERS += \
 	$$PWD/projectManagement/suggestToCreateDiagramWidget.h \
 	$$PWD/projectManagement/suggestToCreateDiagramDialog.h \
 	$$PWD/projectManagement/suggestToCreateProjectDialog.h \
-	$$PWD/generationRules/specifyGenerationRulesDialog.h \
 	$$PWD/findReplaceDialog.h \
 
 SOURCES += \
@@ -47,7 +62,6 @@ SOURCES += \
 	$$PWD/projectManagement/suggestToCreateDiagramWidget.cpp \
 	$$PWD/projectManagement/suggestToCreateDiagramDialog.cpp \
 	$$PWD/projectManagement/suggestToCreateProjectDialog.cpp \
-	$$PWD/generationRules/specifyGenerationRulesDialog.cpp \
 	$$PWD/findReplaceDialog.cpp \
 
 FORMS += \
@@ -58,5 +72,4 @@ FORMS += \
 	$$PWD/metamodelingOnFly/addNodeDialog.ui \
 	$$PWD/metamodelingOnFly/restorePropertiesDialog.ui \
 	$$PWD/metamodelingOnFly/restoreElementDialog.ui \
-	$$PWD/generationRules/specifyGenerationRulesDialog.ui \
 	$$PWD/findReplaceDialog.ui \

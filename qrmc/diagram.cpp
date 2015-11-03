@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "diagram.h"
 #include "classes/type.h"
 #include "classes/enumType.h"
@@ -177,6 +191,13 @@ public:
 	}
 };
 
+class Diagram::ElementDescriptonGenerator: public Diagram::MapMethodGenerator {
+public:
+	virtual QString generate(Type *type, const QString &lineTemplate) const {
+		return type->generateElementDescription(lineTemplate);
+	}
+};
+
 class Diagram::ParentsMapGenerator: public Diagram::MapMethodGenerator {
 public:
 	virtual QString generate(Type *type, const QString &lineTemplate) const {
@@ -241,6 +262,11 @@ QString Diagram::generatePropertyDisplayedNamesMap(const QString &lineTemplate) 
 	return generateMapMethod(lineTemplate, PropertyDisplayedNamesGenerator());
 }
 
+QString Diagram::generateElementDescriptionMap(const QString &lineTemplate) const
+{
+	return generateMapMethod(lineTemplate, ElementDescriptonGenerator());
+}
+
 QString Diagram::generateParentsMap(const QString &lineTemplate) const
 {
 	return generateMapMethod(lineTemplate, ParentsMapGenerator());
@@ -270,6 +296,20 @@ class Diagram::ReferencePropertiesGenerator: public Diagram::ListMethodGenerator
 public:
 	virtual QString generate(Type *type, const QString &lineTemplate) const {
 		return type->generateReferenceProperties(lineTemplate);
+	}
+};
+
+class Diagram::PortTypesGenerator: public Diagram::ListMethodGenerator {
+public:
+	virtual QString generate(Type *type, const QString &lineTemplate) const {
+		return type->generatePortTypes(lineTemplate);
+	}
+};
+
+class Diagram::PropertyNameGenerator: public Diagram::ListMethodGenerator {
+public:
+	virtual QString generate(Type *type, const QString &lineTemplate) const {
+		return type->generatePropertyName(lineTemplate);
 	}
 };
 
@@ -321,6 +361,16 @@ QString Diagram::generateConnections(const QString &lineTemplate) const
 QString Diagram::generateReferenceProperties(const QString &lineTemplate) const
 {
 	return generateListMethod(lineTemplate, ReferencePropertiesGenerator());
+}
+
+QString Diagram::generatePortTypes(const QString &lineTemplate) const
+{
+	return generateListMethod(lineTemplate, PortTypesGenerator());
+}
+
+QString Diagram::generatePropertyName(const QString &lineTemplate) const
+{
+	return generateListMethod(lineTemplate, PropertyNameGenerator());
 }
 
 QString Diagram::generateContainers(const QString &lineTemplate) const
@@ -376,6 +426,10 @@ QString Diagram::generateEnums(const QString &lineTemplate) const
 		isFirstLine = false;
 		result += line + endline;
 	}
+
+	if (result.isEmpty())
+		return "	Q_UNUSED(name);";
+
 	return result;
 }
 

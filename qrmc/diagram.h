@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QString>
@@ -30,9 +44,12 @@ namespace qrmc {
 		QString generatePropertiesMap(const QString &lineTemplate) const;
 		QString generatePropertyDefaultsMap(const QString &lineTemplate) const;
 		QString generatePropertyDisplayedNamesMap(const QString &lineTemplate) const;
+		QString generateElementDescriptionMap(const QString &lineTemplate) const;
 		QString generateParentsMap(const QString &lineTemplate) const;
 		QString generateContainers(const QString &lineTemplate) const;
 		QString generateReferenceProperties(const QString &lineTemplate) const;
+		QString generatePortTypes(const QString &lineTemplate) const;
+		QString generatePropertyName(const QString &lineTemplate) const;
 		QString generateConnections(const QString &lineTemplate) const;
 		QString generateUsages(const QString &lineTemplate) const;
 		QString generateFactory(const QString &lineTemplate) const;
@@ -67,6 +84,8 @@ namespace qrmc {
 		class ConnectionsGenerator;
 		class ContainersGenerator;
 		class ReferencePropertiesGenerator;
+		class PortTypesGenerator;
+		class PropertyNameGenerator;
 		class FactoryGenerator;
 		class IsNodeOrEdgeGenerator;
 		class EnumsGenerator;
@@ -79,6 +98,7 @@ namespace qrmc {
 		class PropertyNamesGenerator;
 		class PropertyDefaultsGenerator;
 		class PropertyDisplayedNamesGenerator;
+		class ElementDescriptonGenerator;
 		class ParentsMapGenerator;
 		class NodesGenerator;
 		class EdgesGenerator;

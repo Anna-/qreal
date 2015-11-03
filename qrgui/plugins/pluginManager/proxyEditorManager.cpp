@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "proxyEditorManager.h"
 
 using namespace qReal;
@@ -297,6 +311,16 @@ void ProxyEditorManager::addEdgeElement(const Id &diagram, const QString &name
 {
 	mProxiedEditorManager->addEdgeElement(diagram, name, displayedName, labelText, labelType
 			, lineType, beginType, endType);
+}
+
+void ProxyEditorManager::updateGenerationRule(const Id &id, const QString &newRule) const
+{
+	mProxiedEditorManager->updateGenerationRule(id, newRule);
+}
+
+QString ProxyEditorManager::generationRule(const Id &id) const
+{
+	return mProxiedEditorManager->generationRule(id);
 }
 
 QPair<Id, Id> ProxyEditorManager::createEditorAndDiagram(const QString &name) const

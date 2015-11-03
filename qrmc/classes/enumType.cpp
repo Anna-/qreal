@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "enumType.h"
 #include "../utils/nameNormalizer.h"
 
@@ -16,7 +30,9 @@ bool EnumType::init(const QString &context)
 		if (!mApi->isLogicalElement(child))
 			continue;
 		if (child.element() == metaEntityValue) {
-			mValues << mApi->stringProperty(child, "valueName");
+			const QString name = mApi->stringProperty(child, "valueName");
+			const QString displayedName = mApi->stringProperty(child, "displayedName");
+			mValues[name] = displayedName;
 		}
 	}
 
@@ -38,11 +54,16 @@ void EnumType::print()
 
 QString EnumType::generateEnums(const QString &lineTemplate) const
 {
-	QString enums;
 	QString line = lineTemplate;
-	foreach(QString value, mValues) {
-		enums += "<< \"" + value + "\" ";
+	QString lineForWrite = "";
+	for (const QString &value : mValues.keys()) {
+		if (!lineForWrite.isEmpty()) {
+			lineForWrite += ", qMakePair(QString(\"" + value + "\"), tr(\"" + mValues[value] + "\"))";
+		} else {
+			lineForWrite = "qMakePair(QString(\"" + value + "\"), tr(\"" + mValues[value] + "\"))";
+		}
 	}
-	line.replace(enumsListTag, enums).replace(elementNameTag, name());
+	line.replace(qMakeLineTag, lineForWrite).replace(elementNameTag, name());
+
 	return line;
 }

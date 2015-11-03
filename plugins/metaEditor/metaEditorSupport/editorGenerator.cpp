@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "editorGenerator.h"
 
 #include <QtCore/QFile>
@@ -7,12 +21,12 @@
 
 #include <QtWidgets/QMessageBox>
 
-#include "../../../qrkernel/roles.h"
+#include <qrkernel/roles.h>
 
-#include "../../../qrutils/outFile.h"
-#include "../../../qrutils/nameNormalizer.h"
+#include <qrutils/outFile.h>
+#include <qrutils/nameNormalizer.h>
 
-#include "../../../qrkernel/settingsManager.h"
+#include <qrkernel/settingsManager.h>
 
 using namespace qReal;
 using namespace metaEditor;
@@ -88,22 +102,22 @@ QPair<QString, QString> EditorGenerator::generateEditor(Id const &metamodelId
 		return QPair<QString, QString>("", "");
 	}
 
-	try {
-		OutFile outpro(pathToFile + "/" + fileBaseName + ".pro");
-		outpro() << QString("QREAL_XML = %1\n").arg(fileBaseName + ".xml");
-		if (includeProList != "") {
-			outpro() << QString("QREAL_XML_DEPENDS = %1\n").arg(includeProList);
-		}
-		outpro() << QString ("QREAL_EDITOR_PATH = %1\n").arg(editorPath);
-		QString const relativeQRealSourcesPath = calculateRelativeQRealSourcesPath(pathToFile, pathToQRealSource);
-		outpro() << QString ("ROOT = %1\n").arg(relativeQRealSourcesPath);
-		outpro() << "\n";
-		outpro() << QString("include (%1)").arg(relativeQRealSourcesPath + "/plugins/editorsSdk/editorsCommon.pri");
-		outpro() << "\n\n";
-
-		generateTranslations(pathToFile, fileBaseName, relativeQRealSourcesPath);
+	bool fileOpened = false;
+	OutFile outpro(pathToFile + "/" + fileBaseName + ".pro", &fileOpened);
+	outpro() << QString("QREAL_XML = %1\n").arg(fileBaseName + ".xml");
+	if (includeProList != "") {
+		outpro() << QString("QREAL_XML_DEPENDS = %1\n").arg(includeProList);
 	}
-	catch (char *) {
+	outpro() << QString ("QREAL_EDITOR_PATH = %1\n").arg(editorPath);
+	QString const relativeQRealSourcesPath = calculateRelativeQRealSourcesPath(pathToFile, pathToQRealSource);
+	outpro() << QString ("ROOT = %1\n").arg(relativeQRealSourcesPath);
+	outpro() << "\n";
+	outpro() << QString("include (%1)").arg(relativeQRealSourcesPath + "/plugins/editorsSdk/editorsCommon.pri");
+	outpro() << "\n\n";
+
+	generateTranslations(pathToFile, fileBaseName, relativeQRealSourcesPath);
+
+	if (!fileOpened) {
 		mErrorReporter.addCritical(QObject::tr("incorrect file name"));
 	}
 
@@ -416,7 +430,8 @@ void EditorGenerator::setGeneralization(QDomElement &parent, const Id &id)
 			{
 				QDomElement generalization = mDocument.createElement("parent");
 				ensureCorrectness(parentId, generalization, "parentName", mApi.stringProperty(parentId, "name"));
-				generalization.setAttribute("overrides", generalizations.attribute("overrides", mApi.stringProperty(inLink, "overrides")));
+				generalization.setAttribute("overrides", generalizations.attribute("overrides"
+						, mApi.stringProperty(inLink, "overrides")));
 				generalizations.appendChild(generalization);
 			}
 		}
@@ -627,7 +642,8 @@ void EditorGenerator::setContainer(QDomElement &parent, Id const &id)
 				container.appendChild(contains);
 			} else if (typeName == "MetaEntityImport") {
 				QDomElement contains = mDocument.createElement("contains");
-				ensureCorrectness(elementId, contains, "type", mApi.stringProperty(elementId, "importedFrom") + "::" + mApi.name(elementId));
+				ensureCorrectness(elementId, contains, "type", mApi.stringProperty(elementId, "importedFrom")
+						+ "::" + mApi.name(elementId));
 				container.appendChild(contains);
 			}
 		}

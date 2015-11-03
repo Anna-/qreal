@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "shape.h"
 #include "../utils/defs.h"
 #include "../diagram.h"
@@ -149,9 +163,6 @@ void Shape::generate(QString &classTemplate) const
 	if (!hasPointPorts()) {
 		unused += nodeIndent + "Q_UNUSED(pointPorts)" + endline;
 	}
-	if (!hasLinePorts()) {
-		unused += nodeIndent + "Q_UNUSED(linePorts)" + endline;
-	}
 	if (!hasLabels()) {
 		unused += nodeIndent + "Q_UNUSED(titles);" + endline + nodeIndent + "Q_UNUSED(factory)" + endline;
 	}
@@ -161,13 +172,15 @@ void Shape::generate(QString &classTemplate) const
 								: "";
 	QString portRendererLine = (hasLinePorts() || hasPointPorts())
 								? compiler->getTemplateUtils(nodeLoadPortsRendererTag)
-								: nodeIndent + "Q_UNUSED(portRenderer)";
+								: nodeIndent +  "mRenderer->setElementRepo(elementRepo);";
 	QString nodeContentsLine = compiler->getTemplateUtils(nodeContentsTag)
 							.replace(nodeWidthTag, QString::number(mWidth))
 							.replace(nodeHeightTag, QString::number(mHeight));
 	QString portsInitLine;
-	foreach(Port *port, mPorts)
+	for (Port *port : mPorts) {
+		port->generatePortList(this->mNode->diagram()->editor()->getAllPortNames());
 		portsInitLine += port->generateInit(compiler) + endline;
+	}
 
 	QString labelsInitLine;
 	QString labelsUpdateLine;
@@ -190,6 +203,11 @@ void Shape::generate(QString &classTemplate) const
 			.replace(nodeInitTag, labelsInitLine)
 			.replace(updateDataTag, labelsUpdateLine)
 			.replace(labelDefinitionTag, labelsDefinitionLine);
+}
+
+QList<Port*> Shape::getPorts() const
+{
+	return mPorts;
 }
 
 void Shape::generateSdf() const

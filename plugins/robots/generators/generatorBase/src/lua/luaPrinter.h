@@ -1,3 +1,17 @@
+/* Copyright 2007-2015 QReal Research Group
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QMap>
@@ -21,12 +35,12 @@ class LuaPrinter : public qrtext::lua::LuaAstVisitorInterface
 {
 public:
 	/// Takes ownership on converters.
-	LuaPrinter(const QString &pathToTemplates
+	LuaPrinter(const QStringList &pathsToTemplates
 			, const qrtext::LanguageToolboxInterface &textLanguage
 			, PrecedenceConverterInterface &precedeceTable
 			, const simple::Binding::ConverterInterface *reservedVariablesConverter);
 
-	~LuaPrinter();
+	~LuaPrinter() override;
 
 	/// Prints the given AST to the code using a set of templates placed in the given in the constructor directory.
 	virtual QString print(const QSharedPointer<qrtext::lua::ast::Node> &node);
@@ -95,6 +109,8 @@ private:
 
 	bool printWithoutPop(const QSharedPointer<qrtext::lua::ast::Node> &node);
 	QString toString(const QSharedPointer<qrtext::lua::ast::Node> &node);
+
+	QStringList addSuffix(const QStringList &list);
 
 	const qrtext::LanguageToolboxInterface &mTextLanguage;
 	QMap<const qrtext::lua::ast::Node *, QString> mGeneratedCode;
