@@ -17,11 +17,12 @@
 #include <QtCore/QDir>
 
 #include <qrutils/outFile.h>
+#include <qrutils/fileSystemUtils.h>
 #include <qrutils/stringUtils.h>
 #include <qrtext/languageToolboxInterface.h>
 
 #include "readableControlFlowGenerator.h"
-#include "gotoControlFlowGenerator.h"
+#include "generatorBase/gotoControlFlowGenerator.h"
 #include "generatorBase/lua/luaProcessor.h"
 #include "generatorBase/parts/variables.h"
 #include "generatorBase/parts/subprograms.h"
@@ -140,7 +141,15 @@ QString MasterGeneratorBase::generate(const QString &indentString)
 			mCustomizer->factory()->terminateCode(), 1, indentString));
 	resultCode.replace("@@USERISRHOOKS@@", utils::StringUtils::addIndent(
 			mCustomizer->factory()->isrHooksCode(), 1, indentString));
-	resultCode.replace("@@VARIABLES@@", mCustomizer->factory()->variables()->generateVariableString());
+	const QString constantsString = mCustomizer->factory()->variables()->generateConstantsString();
+	const QString variablesString = mCustomizer->factory()->variables()->generateVariableString();
+	if (resultCode.contains("@@CONSTANTS@@")) {
+		resultCode.replace("@@CONSTANTS@@", constantsString);
+		resultCode.replace("@@VARIABLES@@", variablesString);
+	} else {
+		resultCode.replace("@@VARIABLES@@", constantsString + variablesString);
+	}
+
 	// This will remove too many empty lines
 	resultCode.replace(QRegExp("\n(\n)+"), "\n\n");
 
@@ -179,8 +188,12 @@ void MasterGeneratorBase::afterGeneration()
 
 void MasterGeneratorBase::outputCode(const QString &path, const QString &code)
 {
-	// File must be removed to leave created and modified timestamps equal.
 	QFile::remove(path);
+
+	// File creation and modified timestamps should be equal after all.
+	// But straitforward removal will not work due to the tunel file system effect:
+	// http://stackoverflow.com/questions/661977/why-windows-sets-new-created-files-created-time-property-to-old-time
 	utils::OutFile out(path);
+	utils::FileSystemUtils::setCreationDateToNow(path);
 	out() << code;
 }

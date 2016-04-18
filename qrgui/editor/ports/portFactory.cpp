@@ -16,6 +16,9 @@
 
 #include "editor/ports/statLine.h"
 #include "editor/ports/statPoint.h"
+#include "editor/ports/statCircular.h"
+
+using namespace qReal::gui::editor;
 
 PortInterface * PortFactory::createPort(const QLineF &line, bool propX1, bool propY1, bool propX2, bool propY2
 		, int initWidth, int initHeight, PortImpl *impl) const
@@ -28,3 +31,10 @@ PortInterface * PortFactory::createPort(const QPointF &point, bool propX, bool p
 {
 	return new StatPoint(point, propX, propY, initWidth, initHeight, impl);
 }
+
+PortInterface * PortFactory::createPort(const QPointF &center, const qreal &r, bool propX, bool propY
+		, int initWidth, int initHeight, PortImpl *impl) const
+{
+	return new StatCircular(center, r, propX, propY, initWidth, initHeight, impl);
+}
+

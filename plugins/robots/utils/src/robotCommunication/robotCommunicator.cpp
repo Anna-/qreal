@@ -13,6 +13,7 @@
  * limitations under the License. */
 
 #include <QtCore/QMetaType>
+#include <QtCore/QMetaObject>
 
 #include "utils/robotCommunication/robotCommunicator.h"
 
@@ -50,19 +51,17 @@ void RobotCommunicator::send(const QByteArray &buffer, const unsigned responseSi
 
 void RobotCommunicator::connect()
 {
-	mRobotCommunicationThreadObject->connect();
+	QMetaObject::invokeMethod(mRobotCommunicationThreadObject, "connect");
 }
 
 void RobotCommunicator::disconnect()
 {
-	mRobotCommunicationThreadObject->disconnect();
+	QMetaObject::invokeMethod(mRobotCommunicationThreadObject, "disconnect");
 }
 
-void RobotCommunicator::checkConsistency()
+RobotCommunicationThreadInterface *RobotCommunicator::currentCommunicator() const
 {
-	if (mRobotCommunicationThreadObject) {
-		mRobotCommunicationThreadObject->checkConsistency();
-	}
+	return mRobotCommunicationThreadObject;
 }
 
 void RobotCommunicator::setRobotCommunicationThreadObject(RobotCommunicationThreadInterface *robotCommunication)
@@ -87,6 +86,6 @@ void RobotCommunicator::setRobotCommunicationThreadObject(RobotCommunicationThre
 			, this, &RobotCommunicator::response);
 	QObject::connect(mRobotCommunicationThreadObject, &RobotCommunicationThreadInterface::errorOccured
 			, this, &RobotCommunicator::errorOccured);
-
-	mRobotCommunicationThreadObject->checkConsistency();
+	QObject::connect(mRobotCommunicationThreadObject, &RobotCommunicationThreadInterface::messageArrived
+			, this, &RobotCommunicator::messageArrived);
 }

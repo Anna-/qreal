@@ -1,4 +1,4 @@
-/* Copyright 2007-2015 QReal Research Group
+/* Copyright 2007-2016 QReal Research Group
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@
 
 namespace qReal {
 
+namespace gui {
+namespace editor {
 class Label;
 
 /// size of a point port
@@ -48,11 +50,7 @@ class QRGUI_EDITOR_EXPORT Element : public QObject, public QGraphicsItem, public
 public:
 	/// Constructor
 	/// @param elementImpl - pointer to implementation of the element. Takes ownership.
-	Element(ElementImpl *elementImpl
-			, const Id &id
-			, models::GraphicalModelAssistApi &graphicalAssistApi
-			, models::LogicalModelAssistApi &logicalAssistApi
-			);
+	Element(ElementImpl *elementImpl, const Id &id, const models::Models &models);
 
 	virtual ~Element() {}
 
@@ -69,30 +67,25 @@ public:
 
 	virtual bool initPossibleEdges() = 0;
 	virtual void initTitles();
+
+	virtual void setName(const QString &name, bool withUndoRedo = false);
 	// for inline editing we should be able to change properties value. right now via graphical
 	// representation. also labels could store indices and get data themselves
-	virtual void setLogicalProperty(const QString &roleName, const QString &value
+	virtual void setLogicalProperty(const QString &roleName, const QString &oldValue, const QString &newValue
 			, bool withUndoRedo = false);
 	QString logicalProperty(const QString &roleName) const;
 
 	virtual void setColorRect(bool bl) = 0;
 
 	// TODO: Move this to constructor.
-	void setController(qReal::Controller *controller);
-	qReal::Controller *controller() const;
+	void setController(Controller *controller);
+	Controller *controller() const;
 
 	ElementImpl* elementImpl() const;
 	bool createChildrenFromMenu() const;
 
 	/// Checks if this element is disabled from palette and if it is grayscales it.
 	void updateEnabledState();
-
-public slots:
-	virtual void select(const bool singleSelected);
-	virtual void setSelectionState(const bool selected);
-
-signals:
-	void switchFolding(bool);
 
 protected:
 	void setHideNonHardLabels(bool visible);
@@ -108,6 +101,7 @@ protected:
 
 	QList<Label *> mLabels;
 
+	const models::Models &mModels;
 	models::LogicalModelAssistApi &mLogicalAssistApi;
 	models::GraphicalModelAssistApi &mGraphicalAssistApi;
 
@@ -115,4 +109,6 @@ protected:
 	Controller *mController;
 };
 
+}
+}
 }

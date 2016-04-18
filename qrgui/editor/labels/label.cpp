@@ -21,12 +21,12 @@
 #include "brandManager/brandManager.h"
 
 using namespace qReal;
+using namespace qReal::gui::editor;
 
 Label::Label(models::GraphicalModelAssistApi &graphicalAssistApi
 		, const Id &elementId
 		, const LabelProperties &properties)
 	: mIsStretched(false)
-	, mParentIsSelected(false)
 	, mWasMoved(false)
 	, mShouldMove(false)
 	, mId(elementId)
@@ -48,6 +48,7 @@ void Label::init()
 {
 	QGraphicsTextItem::setFlags(ItemIsSelectable);
 	QGraphicsTextItem::setFlag(ItemIsMovable, SettingsManager::value("MoveLabels", true).toBool());
+	connect(document(), &QTextDocument::contentsChanged, this, &Label::saveToRepo);
 
 	reinitFont();
 	setRotation(mProperties.rotation());
@@ -108,11 +109,6 @@ void Label::setTextFromRepo(const QString &text)
 	}
 }
 
-void Label::setParentSelected(bool isSelected)
-{
-	mParentIsSelected = isSelected;
-}
-
 void Label::setParentContents(const QRectF &contents)
 {
 	mParentContents = contents;
@@ -169,16 +165,16 @@ void Label::setSuffix(const QString &text)
 void Label::updateData(bool withUndoRedo)
 {
 	const QString value = toPlainText();
-	NodeElement * const parent = static_cast<NodeElement *>(parentItem());
+	Element * const parent = dynamic_cast<Element *>(parentItem());
 	if (mProperties.binding() == "name") {
 		parent->setName(value, withUndoRedo);
 	} else if (mEnumValues.isEmpty()) {
-		parent->setLogicalProperty(mProperties.binding(), value, withUndoRedo);
+		parent->setLogicalProperty(mProperties.binding(), mOldText, value, withUndoRedo);
 	} else {
 		const QString repoValue = mEnumValues.values().contains(value)
 				? mEnumValues.key(value)
 				: enumText(value);
-		parent->setLogicalProperty(mProperties.binding(), repoValue, withUndoRedo);
+		parent->setLogicalProperty(mProperties.binding(), mOldText, repoValue, withUndoRedo);
 	}
 
 	mGraphicalModelAssistApi.setLabelPosition(mId, mProperties.index(), pos());
@@ -188,6 +184,11 @@ void Label::updateData(bool withUndoRedo)
 void Label::reinitFont()
 {
 	setFont(BrandManager::fonts()->sceneLabelsFont());
+}
+
+void Label::saveToRepo()
+{
+	updateData(false);
 }
 
 void Label::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -202,7 +203,9 @@ void Label::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			&& event->pos().y() >= boundingRect().bottom() - 10);
 
 	QGraphicsTextItem::mousePressEvent(event);
+	parentItem()->setSelected(true);
 	event->accept();
+	setSelected(true);
 }
 
 void Label::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -237,6 +240,7 @@ void Label::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	updateData();
 
 	QGraphicsTextItem::mouseReleaseEvent(event);
+	parentItem()->setSelected(true);
 	setSelected(true);
 }
 
@@ -358,7 +362,9 @@ void Label::startTextInteraction()
 
 void Label::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	if (toPlainText().isEmpty() && !mParentIsSelected && !isSelected() && dynamic_cast<EdgeElement *>(parentItem())) {
+	if (toPlainText().isEmpty() && !parentItem()->isSelected()
+			&& !isSelected() && dynamic_cast<EdgeElement *>(parentItem())) {
+		/// @todo: Why label decides it? Why not edge element itself?
 		return;
 	}
 

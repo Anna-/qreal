@@ -23,15 +23,17 @@ EllipseObject::EllipseObject(QObject *parent)
 	: CanvasObject(parent)
 	, mSemiDiameterX(0)
 	, mSemiDiameterY(0)
+	, mFilled(false)
 {
 }
 
 EllipseObject::EllipseObject(const QPoint &center, int semiDiameterX, int semiDiameterY
-		, const QColor &color, int thickness, QObject *parent)
+		, const QColor &color, int thickness, bool filled, QObject *parent)
 	: CanvasObject(color, thickness, parent)
 	, mCenter(center)
 	, mSemiDiameterX(semiDiameterX)
 	, mSemiDiameterY(semiDiameterY)
+	, mFilled(filled)
 {
 }
 
@@ -70,21 +72,32 @@ QRect EllipseObject::boundingRect() const
 	return QRect(center() - QPoint(semiDiameterX(), semiDiameterY()), QSize(2 * semiDiameterX(), 2 * semiDiameterY()));
 }
 
+bool EllipseObject::filled() const
+{
+	return mFilled;
+}
+
+void EllipseObject::setFilled(bool filled)
+{
+	mFilled = filled;
+}
+
 void EllipseObject::paint(QPainter *painter)
 {
 	CanvasObject::paint(painter);
+	painter->setBrush(mFilled ? QBrush(color(), Qt::SolidPattern) : QBrush());
 	painter->drawEllipse(mCenter, mSemiDiameterX, mSemiDiameterY);
 }
 
 QJsonObject EllipseObject::toJson() const
 {
-	return QJsonObject({
-		{ "type", "ellipse" }
-		, { "x", mCenter.x() }
-		, { "y", mCenter.y() }
-		, { "a", mSemiDiameterX }
-		, { "b", mSemiDiameterY }
-		, { "color", color().name() }
-		, { "thickness", thickness() }
-	});
+	QJsonObject result;
+	result["type"] = "ellipse";
+	result["x"] = mCenter.x();
+	result["y"] = mCenter.y();
+	result["a"] = mSemiDiameterX;
+	result["b"] = mSemiDiameterY;
+	result["color"] = color().name();
+	result["thickness"] = thickness();
+	return result;
 }

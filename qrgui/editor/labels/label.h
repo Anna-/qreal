@@ -22,6 +22,8 @@
 #include "qrgui/editor/labels/labelProperties.h"
 
 namespace qReal {
+namespace gui {
+namespace editor {
 
 class Label : public QGraphicsTextItem, public LabelInterface
 {
@@ -83,6 +85,7 @@ private:
 	void init();
 	void reinitFont();
 
+	void saveToRepo();
 	void updateData(bool withUndoRedo = false);
 	void updateRect(QPointF newBottomRightPoint);
 	void setText(const QString &text);
@@ -97,7 +100,6 @@ private:
 	QRectF mParentContents;
 	QString mOldText;
 	bool mIsStretched;
-	bool mParentIsSelected;
 	bool mWasMoved;
 	bool mShouldMove;
 	const Id mId;
@@ -105,4 +107,6 @@ private:
 	LabelProperties mProperties;
 };
 
+}
+}
 }

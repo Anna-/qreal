@@ -63,7 +63,7 @@ ShapeEdit::ShapeEdit(
 	, const EditorManagerInterface &editorManager
 	, const qrRepo::GraphicalRepoApi &graphicalRepoApi
 	, MainWindow *mainWindow
-	, EditorView *editorView
+	, qReal::gui::editor::EditorView *editorView
 	, bool useTypedPorts
 	)
 	: QWidget(nullptr)
@@ -340,14 +340,14 @@ void ShapeEdit::save()
 		foreach (const Id graphicalElement, mGraphicalElements) {
 			mEditorManager->updateShape(graphicalElement, mDocument.toString(4));
 			for (QGraphicsItem * const item : mEditorView->editorViewScene().items()) {
-				NodeElement * const element = dynamic_cast<NodeElement *>(item);
+				qReal::gui::editor::NodeElement * const element = dynamic_cast<qReal::gui::editor::NodeElement *>(item);
 				if (element && element->id().type() == mId.type()) {
 					element->updateShape(mDocument.toString(4));
 				}
 			}
 		}
 
-		mMainWindow->loadPlugins();
+		mMainWindow->loadEditorPlugins();
 	}
 
 	QMessageBox::information(this, tr("Saving"), "Saved successfully");

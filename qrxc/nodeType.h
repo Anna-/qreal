@@ -36,6 +36,7 @@ public:
 	virtual bool generatePorts(utils::OutFile &out, bool isNotFirst);
 	bool copyPorts(NodeType *port) override;
 	bool copyPictures(GraphicType *parent) override;
+	QList<Port *> ports() const override;
 
 private:
 	QList<Port*> mPorts;
@@ -54,6 +55,7 @@ private:
 	bool initPorts();
 	bool initPointPorts(const QDomElement &portsElement);
 	bool initLinePorts(const QDomElement &portsElement);
+	bool initCircularPorts(const QDomElement &portsElement);
 	virtual bool initLabel(Label *label, const QDomElement &element, const int &count);
 	bool initBooleanProperties();
 };

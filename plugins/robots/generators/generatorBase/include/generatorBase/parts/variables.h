@@ -40,6 +40,9 @@ public:
 			, const kitBase::robotModel::RobotModelInterface &robotModel
 			, qrtext::LanguageToolboxInterface &luaToolbox);
 
+	/// Returns global constants declarations string
+	QString generateConstantsString() const;
+
 	/// Returns global variables declarations string
 	QString generateVariableString() const;
 
@@ -53,6 +56,7 @@ public:
 
 protected:
 	QString typeExpression(const QSharedPointer<qrtext::core::types::TypeExpression> &type) const;
+	QString typeName(const QSharedPointer<qrtext::core::types::TypeExpression> &type) const;
 	QString constantDeclaration(const QSharedPointer<qrtext::core::types::TypeExpression> &type) const;
 	QString variableDeclaration(const QSharedPointer<qrtext::core::types::TypeExpression> &type) const;
 

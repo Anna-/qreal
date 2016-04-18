@@ -46,7 +46,10 @@ public:
 	/// @param saveFile QReal save file (qrs) that will be opened and interpreted.
 	/// @param background If true then the save file will be interpreted in the fastest speed and 2D model window
 	/// will be closed immediately after the interpretation stopped.
-	void interpret(const QString &saveFile, bool background);
+	bool interpret(const QString &saveFile, bool background);
+
+private slots:
+	void close();
 
 private:
 	void connectRobotModel(const model::RobotModel *robotModel);
@@ -59,7 +62,7 @@ private:
 	qReal::ProjectManager mProjectManager;
 	qReal::NullMainWindow mMainWindow;
 	qReal::NullTextManager mTextManager;
-	qReal::SceneCustomizer mSceneCustomizer;
+	qReal::gui::editor::SceneCustomizer mSceneCustomizer;
 	qReal::PluginConfigurator mConfigurator;
 	interpreterCore::RobotsPluginFacade mPluginFacade;
 	Reporter mReporter;

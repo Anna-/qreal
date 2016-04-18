@@ -18,7 +18,6 @@
 #include <QtGui/QMouseEvent>
 #include <QtCore/QtAlgorithms>
 #include <QtWidgets/QVBoxLayout>
-#include <QtCore/QMimeData>
 #include <QtGui/QDrag>
 
 #include <qrkernel/settingsManager.h>
@@ -34,10 +33,10 @@ using namespace gui;
 
 PaletteTree::PaletteTree(QWidget *parent)
 	: QWidget(parent)
+	, mTree(nullptr)
 	, mCurrentEditor(0)
 {
 	initUi();
-	createPaletteTree();
 }
 
 void PaletteTree::initUi()
@@ -112,8 +111,11 @@ void PaletteTree::initDone()
 		connect(mComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setActiveEditor(int)));
 		mComboBox->show();
 	}
+
 	setActiveEditor(SettingsManager::value("CurrentIndex", 0).toInt());
-	mTree->resizeIcons();
+	if (mTree) {
+		mTree->resizeIcons();
+	}
 }
 
 void PaletteTree::setComboBox(const Id &id)
@@ -202,7 +204,7 @@ void PaletteTree::saveConfiguration()
 	SettingsManager::setValue("PaletteRepresentation", mIconsView);
 	SettingsManager::setValue("PaletteIconsInARowCount", mItemsCountInARow);
 	int diagramIndex = 0;
-	foreach (const PaletteTreeWidgets *editorTree, mEditorsTrees) {
+	for (const PaletteTreeWidgets *editorTree : mEditorsTrees) {
 		editorTree->saveConfiguration(mComboBox->itemText(diagramIndex));
 		diagramIndex++;
 	}
@@ -222,8 +224,8 @@ void PaletteTree::setIconsView(bool iconsView)
 
 void PaletteTree::loadEditors(EditorManagerInterface &editorManagerProxy)
 {
-	foreach (const Id &editor, editorManagerProxy.editors()) {
-		foreach (const Id &diagram, editorManagerProxy.diagrams(editor)) {
+	for (const Id &editor : editorManagerProxy.editors()) {
+		for (const Id &diagram : editorManagerProxy.diagrams(editor)) {
 			addEditorElements(editorManagerProxy, editor, diagram);
 		}
 	}
@@ -244,7 +246,9 @@ int PaletteTree::itemsCountInARow() const
 
 void PaletteTree::resizeEvent(QResizeEvent *)
 {
-	mTree->resizeIcons();
+	if (mTree) {
+		mTree->resizeIcons();
+	}
 }
 
 int PaletteTree::maxItemsCountInARow() const
@@ -297,22 +301,30 @@ void PaletteTree::installEventFilter(QObject *obj)
 
 void PaletteTree::setElementVisible(const Id &metatype, bool visible)
 {
-	mTree->setElementVisible(metatype, visible);
+	if (mTree) {
+		mTree->setElementVisible(metatype, visible);
+	}
 }
 
 void PaletteTree::setVisibleForAllElements(bool visible)
 {
-	mTree->setVisibleForAllElements(visible);
+	if (mTree) {
+		mTree->setVisibleForAllElements(visible);
+	}
 }
 
 void PaletteTree::setElementEnabled(const Id &metatype, bool enabled)
 {
-	mTree->setElementEnabled(metatype, enabled);
+	if (mTree) {
+		mTree->setElementEnabled(metatype, enabled);
+	}
 }
 
 void PaletteTree::setEnabledForAllElements(bool enabled)
 {
-	mTree->setEnabledForAllElements(enabled);
+	if (mTree) {
+		mTree->setEnabledForAllElements(enabled);
+	}
 }
 
 void PaletteTree::refreshUserPalettes()

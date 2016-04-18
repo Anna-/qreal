@@ -17,6 +17,7 @@
 #include <QtWidgets/QApplication>
 
 #include <twoDModel/engine/twoDModelEngineFacade.h>
+#include <utils/widgets/comPortPicker.h>
 
 using namespace nxt;
 using namespace qReal;
@@ -62,13 +63,6 @@ void NxtKitInterpreterPlugin::init(const kitBase::KitPluginConfigurator &configu
 			, [this](const QString &modelName)
 	{
 		mCurrentlySelectedModelName = modelName;
-		if (modelName == mUsbRealRobotModel.name()) {
-			mUsbRealRobotModel.checkConnection();
-		}
-
-		if (modelName == mBluetoothRealRobotModel.name()) {
-			mBluetoothRealRobotModel.checkConnection();
-		}
 	});
 
 	qReal::gui::MainWindowInterpretersInterface &interpretersInterface
@@ -77,9 +71,17 @@ void NxtKitInterpreterPlugin::init(const kitBase::KitPluginConfigurator &configu
 			, [&interpretersInterface](const QString &message) {
 				interpretersInterface.errorReporter()->addError(message);
 	});
+	connect(&mUsbRealRobotModel, &robotModel::real::RealRobotModel::messageArrived
+			, [&interpretersInterface](const QString &message) {
+				interpretersInterface.errorReporter()->addInformation(message);
+	});
 	connect(&mBluetoothRealRobotModel, &robotModel::real::RealRobotModel::errorOccured
 			, [&interpretersInterface](const QString &message) {
 				interpretersInterface.errorReporter()->addError(message);
+	});
+	connect(&mBluetoothRealRobotModel, &robotModel::real::RealRobotModel::messageArrived
+			, [&interpretersInterface](const QString &message) {
+				interpretersInterface.errorReporter()->addInformation(message);
 	});
 
 	mTwoDModel->init(configurator.eventsForKitPlugin()
@@ -124,6 +126,13 @@ QList<kitBase::AdditionalPreferences *> NxtKitInterpreterPlugin::settingsWidgets
 	return {mAdditionalPreferences};
 }
 
+QWidget *NxtKitInterpreterPlugin::quickPreferencesFor(const kitBase::robotModel::RobotModelInterface &model)
+{
+	return model.name().toLower().contains("bluetooth")
+			? produceBluetoothPortConfigurer()
+			: nullptr;
+}
+
 QList<qReal::ActionInfo> NxtKitInterpreterPlugin::customActions()
 {
 	return {};
@@ -149,7 +158,12 @@ QIcon NxtKitInterpreterPlugin::iconForFastSelector(
 					: QIcon(":/icons/switch-2d.svg");
 }
 
-kitBase::DevicesConfigurationProvider * NxtKitInterpreterPlugin::devicesConfigurationProvider()
+kitBase::DevicesConfigurationProvider *NxtKitInterpreterPlugin::devicesConfigurationProvider()
 {
 	return &mTwoDModel->devicesConfigurationProvider();
+}
+
+QWidget *NxtKitInterpreterPlugin::produceBluetoothPortConfigurer()
+{
+	return new ui::ComPortPicker("NxtBluetoothPortName", this);
 }

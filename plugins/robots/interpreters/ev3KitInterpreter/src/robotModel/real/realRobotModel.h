@@ -26,18 +26,20 @@ class RealRobotModel : public Ev3RobotModelBase
 	Q_OBJECT
 
 public:
-	RealRobotModel(const QString &kitId, const QString &robotId);
+	RealRobotModel(const QString &kitId, const QString &robotId
+			, utils::robotCommunication::RobotCommunicationThreadInterface *communicationThread);
 
-	QString name() const override;
-	QString friendlyName() const override;
 	bool needsConnection() const override;
-	int priority() const override;
 
 	void connectToRobot() override;
 	void disconnectFromRobot() override;
 
-public slots:
-	void rereadSettings() override;
+signals:
+	/// Emitted when communicator throws an error to be displayed with error reporter.
+	void errorOccured(const QString &text);
+
+	/// Emitted when communicator wants to display user some informational message.
+	void messageArrived(const QString &text);
 
 private:
 	kitBase::robotModel::robotParts::Device *createDevice(

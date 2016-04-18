@@ -14,10 +14,14 @@
 
 #include "startWidget.h"
 
+#include <QtCore/QSignalMapper>
 #include <QtWidgets/QInputDialog>
 #include <QtWidgets/QScrollArea>
 
 #include <qrkernel/settingsManager.h>
+#include <qrgui/plugins/pluginManager/editorManager.h>
+#include <qrgui/plugins/pluginManager/interpreterEditorManager.h>
+#include <qrgui/plugins/pluginManager/proxyEditorManager.h>
 
 #include "mainWindow/mainWindow.h"
 #include "styledButton.h"
@@ -276,7 +280,7 @@ QWidget *StartWidget::createPluginButton(const Id &editor, const Id &diagram, QW
 	QSignalMapper *pluginMapper = new QSignalMapper(result);
 	pluginMapper->setMapping(result, "qrm:/" + editor.editor() + "/" + diagram.diagram() + "/" + diagramNodeName);
 	connect(result, SIGNAL(clicked()), pluginMapper, SLOT(map()));
-	connect(pluginMapper, SIGNAL(mapped(QString)), mMainWindow, SLOT(createDiagram(QString)));
+	connect(pluginMapper, SIGNAL(mapped(QString)), mMainWindow, SLOT(createProject(QString)));
 
 	return result;
 }
@@ -308,7 +312,7 @@ void StartWidget::openInterpretedDiagram()
 			// TODO: ???
 			mMainWindow->models().repoControlApi().exterminate();
 			mMainWindow->models().reinit();
-			mMainWindow->loadPlugins();
+			mMainWindow->loadEditorPlugins();
 			mMainWindow->createDiagram(interpreterIdString);
 		}
 	} else {
@@ -335,7 +339,7 @@ void StartWidget::createInterpretedDiagram()
 		mMainWindow->addEditorElementsToPalette(editorAndDiagram.first, editorAndDiagram.second);
 		mMainWindow->models().repoControlApi().exterminate();
 		mMainWindow->models().reinit();
-		mMainWindow->loadPlugins();
+		mMainWindow->loadEditorPlugins();
 		mMainWindow->initInterpretedPlugins();
 	} else {
 		show();

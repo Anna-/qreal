@@ -14,14 +14,32 @@
 
 #pragma once
 
+#include <QtCore/QScopedPointer>
+
 #include <trikGeneratorBase/trikGeneratorPluginBase.h>
 #include <trikGeneratorBase/robotModel/generatorModelExtensionInterface.h>
 
+namespace qReal {
+class ErrorReporterInterface;
+}
+
 namespace utils {
+namespace robotCommunication {
+
 class TcpRobotCommunicator;
+class RunProgramProtocol;
+class StopRobotProtocol;
+class UploadProgramProtocol;
+
+}
 }
 
 namespace trik {
+
+namespace robotModel {
+class TrikRobotModelBase;
+}
+
 namespace qts {
 
 /// Generation of QtScript program for TRIK, uploading and execution of a program.
@@ -31,7 +49,7 @@ class TrikQtsGeneratorPluginBase : public TrikGeneratorPluginBase
 	Q_OBJECT
 
 public:
-	TrikQtsGeneratorPluginBase(kitBase::robotModel::RobotModelInterface * const robotModel
+	TrikQtsGeneratorPluginBase(trik::robotModel::TrikRobotModelBase * const robotModel
 			, kitBase::blocksBase::BlocksFactoryInterface * const blocksFactory
 			, const QStringList &pathsToTemplates);
 
@@ -55,8 +73,7 @@ private slots:
 	/// Generates and uploads script to a robot. Program then can be launched manually or remotely
 	/// by runCommand. Program is stored on robot as a file next to scriptRunner and named
 	/// as <qReal save name>.qts.
-	/// @returns True, if successful.
-	bool uploadProgram();
+	void uploadProgram();
 
 	/// Runs currently opened program on a robot. Uploads it first.
 	void runProgram();
@@ -64,7 +81,13 @@ private slots:
 	/// Tries to remotely abort script execution and stop robot.
 	void stopRobot();
 
+	/// Reenables buttons when program uploading or robot stopping is complete (sucessfully or with error).
+	void onProtocolFinished();
+
 private:
+	/// Disables "run", "upload" and "stop" buttons when there is pending command to a robot.
+	void disableButtons();
+
 	/// Action that launches code generator
 	QAction *mGenerateCodeAction;  // Doesn't have ownership; may be disposed by GUI.
 
@@ -77,9 +100,22 @@ private:
 	/// Action that stops script execution and turns off motors.
 	QAction *mStopRobotAction;  // Doesn't have ownership; may be disposed by GUI.
 
-	utils::TcpRobotCommunicator *mCommunicator;
+	/// Communicator object used to send commands to robot.
+	QScopedPointer<utils::robotCommunication::TcpRobotCommunicator> mCommunicator;
+
+	/// Robot model that is used by generator to check config file version on a robot.
+	trik::robotModel::TrikRobotModelBase &mRobotModel;
 
 	QStringList mPathsToTemplates;
+
+	/// Protocol that is used to upload program to robot.
+	QScopedPointer<utils::robotCommunication::UploadProgramProtocol> mUploadProgramProtocol;
+
+	/// Protocol that is used to upload and run program.
+	QScopedPointer<utils::robotCommunication::RunProgramProtocol> mRunProgramProtocol;
+
+	/// Protocol that is used to stop robot.
+	QScopedPointer<utils::robotCommunication::StopRobotProtocol> mStopRobotProtocol;
 };
 
 }

@@ -32,7 +32,11 @@ public:
 
 	QHash<QString, int> buttonCodes() const override;
 
+	/// Registers error reporter in a model.
 	virtual void setErrorReporter(qReal::ErrorReporterInterface &errorReporter) = 0;
+
+	/// Returns config file version that shall be on a robot to be able to use this model.
+	virtual QString robotConfigFileVersion() const = 0;
 
 protected:
 	virtual kitBase::robotModel::DeviceInfo displayInfo() const;
@@ -43,6 +47,7 @@ protected:
 	virtual kitBase::robotModel::DeviceInfo servoMotorInfo() const;
 	virtual kitBase::robotModel::DeviceInfo encoderInfo() const;
 
+	virtual kitBase::robotModel::DeviceInfo touchSensorInfo() const;
 	virtual kitBase::robotModel::DeviceInfo lightSensorInfo() const;
 	virtual kitBase::robotModel::DeviceInfo infraredSensorInfo() const;
 

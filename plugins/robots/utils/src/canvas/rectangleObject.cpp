@@ -21,12 +21,14 @@ using namespace utils;
 
 RectangleObject::RectangleObject(QObject *parent)
 	: CanvasObject(parent)
+	, mFilled(false)
 {
 }
 
-RectangleObject::RectangleObject(const QRect &shape, const QColor &color, int thickness, QObject *parent)
+RectangleObject::RectangleObject(const QRect &shape, const QColor &color, int thickness, bool filled, QObject *parent)
 	: CanvasObject(color, thickness, parent)
 	, mShape(shape)
+	, mFilled(filled)
 {
 }
 
@@ -40,21 +42,32 @@ QRect RectangleObject::boundingRect() const
 	return mShape;
 }
 
+bool RectangleObject::filled() const
+{
+	return mFilled;
+}
+
+void RectangleObject::setFilled(bool filled)
+{
+	mFilled = filled;
+}
+
 void RectangleObject::paint(QPainter *painter)
 {
 	CanvasObject::paint(painter);
+	painter->setBrush(mFilled ? QBrush(color(), Qt::SolidPattern) : QBrush());
 	painter->drawRect(mShape);
 }
 
 QJsonObject RectangleObject::toJson() const
 {
-	return QJsonObject({
-		{ "type", "rectangle" }
-		, { "x", mShape.x() }
-		, { "y", mShape.y() }
-		, { "width", mShape.width() }
-		, { "height", mShape.height() }
-		, { "color", color().name() }
-		, { "thickness", thickness() }
-	});
+	QJsonObject result;
+	result["type"] = "rectangle";
+	result["x"] = mShape.x();
+	result["y"] = mShape.y();
+	result["width"] = mShape.width();
+	result["height"] = mShape.height();
+	result["color"] = color().name();
+	result["thickness"] = thickness();
+	return result;
 }

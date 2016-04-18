@@ -17,6 +17,8 @@
 #include <QtCore/QString>
 
 namespace qReal {
+namespace gui {
+namespace editor {
 
 /// Provides some methods for QReal scene customization
 /// @todo Get rid of it cause all entities here must be specified in metamodel.
@@ -66,7 +68,8 @@ public:
 
 	/// Customizes an explosion collapse action text that will be displayed in element`s context menu.
 	virtual void setCollapseExplosionActionText(const QString &text) = 0;
-
 };
 
+}
+}
 }
