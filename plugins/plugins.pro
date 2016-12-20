@@ -26,6 +26,7 @@ SUBDIRS += \
 	$$PWD/hascol/hascol.pro \
 	$$PWD/metaEditor/metaEditor.pro \
 	$$PWD/requirements/requirements.pro \
+	$$PWD/dachass/dachass.pro \
 
 # interpreted plugins
 SUBDIRS += \
