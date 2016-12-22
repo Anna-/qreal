@@ -35,8 +35,9 @@ void GraphicalModelView::rowsInserted(const QModelIndex &parent, int start, int 
 	for (int row = start; row <= end; ++row) {
 		const QPersistentModelIndex current = model()->index(row, 0, parent);
 		const Id logicalId = current.data(roles::logicalIdRole).value<Id>();
-		if (parentLogicalId.isNull() || parentLogicalId.editor() != "MetaEditor"
-				|| logicalId.editor() != "MetaEditor")
+		if (parentLogicalId.isNull()
+				|| (parentLogicalId.editor() != "MetaEditor" && parentLogicalId.editor() != "DachassMetamodel")
+				|| (logicalId.editor() != "MetaEditor" && logicalId.editor() != "DachassMetamodel"))
 		{
 			parentLogicalId = Id::rootId();
 		}

@@ -1,0 +1,56 @@
+func:
+<element name="Function"/>
+<element name="CommonEdge"/>
+<element name="Signal"/>
+
+struct:
+<element name="Class"/>
+<element name="Contains"/>
+
+sequence:
+<element name="Object"/>
+<element name="Signal"/>
+
+behavour:
+<element name="Header"/>
+<element name="End"/>
+<element name="Action"/>
+<element name="To"/>
+<element name="From"/>
+<element name="Delay"/>
+<element name="Paralel"/>
+<element name="CommonEdge"/>
+<element name="If"/>
+<element name="Switch"/>
+<element name="Case"/>
+<element name="ForBegin"/>
+<element name="ForEnd"/>
+<element name="WhileBegin"/>
+<element name="WhileEnd"/>
+<element name="Break"/>
+<element name="BranchTo"/>
+<element name="BranchName"/>
+<element name="Subfunction"/>
+<element name="Empty"/>
+
+					<container>
+                        <contains type="Header"/>
+                        <contains type="End"/>
+                        <contains type="Action"/>
+                        <contains type="If"/>
+                        <contains type="Subfunction"/>
+                        <contains type="BranchTo"/>
+                        <contains type="BranchName"/>
+                        <contains type="Switch"/>
+                        <contains type="Case"/>
+                        <contains type="To"/>
+                        <contains type="From"/>
+                        <contains type="Delay"/>
+                        <contains type="Empty"/>
+                        <contains type="ForBegin"/>
+                        <contains type="ForEnd"/>
+                        <contains type="WhileBegin"/>
+                        <contains type="WhileEnd"/>
+                        <contains type="Break"/>
+                    </container>
+

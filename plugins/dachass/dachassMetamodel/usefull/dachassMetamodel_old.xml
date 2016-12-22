@@ -1,40 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metamodel version="1.0.0" xmlns="http://schema.real.com/schema/">
     <namespace>UML 2.0</namespace>
-    <diagram name="DachassEditor" nodeName="newDachassModel" displayedName="DACHaSS Editor">
-	    <nonGraphicTypes>
-            <enum displayedName="Build Configuration" name="buildConfiguration">
-                <value displayedName="Debug" name="debug"/>
-                <value displayedName="Release" name="release"/>
-            </enum>
-        </nonGraphicTypes>
+    <diagram name="FunctionalEditor" nodeName="newFunctionalDiagram" displayedName="Functional Editor">
         <graphicTypes>
-		    <node name="newDachassModel" displayedName="New Dachass Model" description="Корневой элемент модели системы. В его свойствах указываются необходимые для сборки параметры" >
-			 <graphics>
-                    <picture sizex="88" sizey="79">
-                        <ellipse stroke-style="solid" fill-style="none" stroke-width="0" fill="#ffffff" y1="0" stroke="#000000" y2="78" x1="0" x2="87"/>
-                    </picture>
-                    <labels/>
-                    <ports/>
-                </graphics>
-                <logic>
-                    <container>
-                        <contains type="newFunctionalDiagram"/>
-                        <contains type="newBehavioralDiagram"/>
-                        <contains type="newStructualDiagram"/>
-                        <contains type="newSequenceDiagram"/>
-                    </container>
-                    <properties>
-                        <property displayedName="Output Dir Path" name="outputDirPath" type="DirectoryPath"/>
-                        <property displayedName="Dir Path to QReal" name="pathToQReal" type="DirectoryPath"/>
-                        <property displayedName="Build Configuration" name="buildConfiguration" type="buildConfiguration">
-                            <default>release</default>
-                        </property>
-                    </properties>
-                    <explodesTo/>
-                </logic>
-            </node>
-            <node name="newFunctionalDiagram" displayedName="New functional diagram" description="Элемент для описания общей функциональности системы. Должен вкладываться в newDachassModel" >
+            <node description="Aeaa?aiia iauaai iienaiey ooieoeiiaeuiinoe nenoaiu" name="newFunctionalDiagram" displayedName="New functional diagram">
                 <graphics>
                     <picture sizex="180" sizey="130">
                         <rectangle stroke-width="0" fill="#ffffff" y1="0" y2="130" x1="0" fill-style="none" x2="180" stroke="#000000" stroke-style="solid"/>
@@ -43,13 +12,11 @@
                     <ports/>
                 </graphics>
                 <logic>
-                    <container>
-                        <contains type="Function"/>
-                    </container>
+                    <container/>
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Function" displayedName="Function" description="Элемент описания некоторой функции системы">
+            <node name="Function" displayedName="Function">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<rectangle stroke-style="solid" fill-style="none" y1="0" y2="60" stroke-width="0" stroke="#000000" x1="0" x2="155" fill="#ffffff"/>
@@ -77,35 +44,33 @@
 					</ports>
 				</graphics>
                 <logic>
-                    <container>
-                        <contains type="Function"/>
-                    </container>
+                    <container/>
                     <properties>
                         <property type="string" name="text" displayedName="Text"/>
                     </properties>
                     <explodesTo/>
                 </logic>
             </node>
-            <edge path="" name="CommonEdge" displayedName="Common Edge" description="Простая связь между элементами">
+            <edge path="" description="Iau?iay eeiey-naycu" name="CommonEdgeFE" displayedName="Common Edge">
                 <graphics>
                     <lineType type="solidLine"/>
                     <shape type="square"/>
                 </graphics>
                 <logic>
-                    <associations endType="open_arrow" beginType="no_arrow">
+                    <associations endType="no_arrow" beginType="no_arrow">
                     <association beginName="begin" endName="end"/>
                     </associations>
                     <fromPorts/>
                     <toPorts/>
                     <explodesTo/>
-                    <dividability isDividable="true"/>
+                    <dividability isDividable="false"/>
                 </logic>
             </edge>
-            <edge path="" name="Signal" displayedName="Signal Edge" description="Связь-элемент, обозначающий сигнал между дригими элементами">
+            <edge path="" description="Ia?aaa?a neaiaea" name="SignalFE" displayedName="Signal Edge">
                 <graphics>
                     <lineType type="dashLine"/>
                     <shape type="broken"/>
-					<labels>
+		    <labels>
                         <label textBinded="name" hard="true"/>
                     </labels>
                 </graphics>
@@ -119,7 +84,11 @@
                     <dividability isDividable="false"/>
                 </logic>
             </edge>
-            <node name="newStructualDiagram" displayedName="New structual diagram" description="Элемент для описания общей структуры системы (например, структура БД). Должен вкладываться в newDachassModel">
+         </graphicTypes>
+    </diagram>
+    <diagram name="StructualEditor" nodeName="newStructualDiagram" displayedName="Structual Editor">
+        <graphicTypes>
+            <node description="Aeaa?aiia iienaiey iauaen no?oeoo?u nenoaiu" name="newStructualDiagram" displayedName="New structual diagram">
                 <graphics>
                     <picture sizex="180" sizey="130">
                         <rectangle stroke-width="0" fill="#ffffff" y1="0" y2="130" x1="0" fill-style="none" x2="180" stroke="#000000" stroke-style="solid"/>
@@ -128,13 +97,11 @@
                     <ports/>
                 </graphics>
                 <logic>
-                    <container>
-                        <contains type="ClassNode"/>
-                    </container>
+                    <container/>
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="ClassNode" displayedName="Class of system" description="Элемент, который обозначает некоторый класс системы">
+            <node name="Class" displayedName="Class">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<rectangle stroke-style="solid" fill-style="none" y1="0" y2="60" stroke-width="0" stroke="#000000" x1="0" x2="155" fill="#ffffff"/>
@@ -158,17 +125,17 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <edge path="" name="Contains" displayedName="Contains Edge" description="Связь, обозначающая отношение вложенности между элементами. Начальный элемент содержит конечный">
+            <edge path="" description="Niaa??eo" name="ContainsSE" displayedName="Contains Edge">
                 <graphics>
                     <lineType type="solidLine"/>
                     <shape type="broken"/>
-					<labels>
+		    <labels>
                         <label textBinded="name" hard="true"/>
                     </labels>
                 </graphics>
                 <logic>
-                    <associations endType="no_arrow" beginType="filled_rhomb">
-						<association beginName="from" endName="to"/>
+                    <associations endType="open_arrow" beginType="no_arrow">
+                    <association beginName="from" endName="to"/>
                     </associations>
                     <fromPorts/>
                     <toPorts/>
@@ -176,7 +143,11 @@
                     <dividability isDividable="false"/>
                 </logic>
             </edge>
-            <node name="newSequenceDiagram" displayedName="New sequence diagram" description="Элемент для описания одной из составляющих поведения системы (последовательность передачи сигналов меджу объектами). Должен вкладываться в newDachassModel">
+        </graphicTypes>
+    </diagram>
+    <diagram name="SequenceEditor" nodeName="newSequenceDiagram" displayedName="Sequence Editor">
+        <graphicTypes>
+            <node description="Aeaa?aiia iienaiey ia?aaa?e neaiaeia aioo?e nenoaiu" name="newSequenceDiagram" displayedName="New sequence diagram">
                 <graphics>
                     <picture sizex="180" sizey="130">
                         <rectangle stroke-width="0" fill="#ffffff" y1="0" y2="130" x1="0" fill-style="none" x2="180" stroke="#000000" stroke-style="solid"/>
@@ -185,17 +156,15 @@
                     <ports/>
                 </graphics>
                 <logic>
-                    <container>
-                        <contains type="Object"/>
-                    </container>
+                    <container/>
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Object" displayedName="Object" description="Элемент, обозначающий некоторый объект системы, умеющий посылать или принимать сигналы">
+            <node name="Object" displayedName="Object">
                <graphics>
-					<picture sizex="30" sizey="250">
-						<rectangle stroke-style="solid" fill-style="none" y1="50" y2="250" stroke-width="0" stroke="#000000" x1="5" x2="25" fill="#ffffff"/>
-					</picture>
+			<picture sizex="30" sizey="250">
+				<rectangle stroke-style="solid" fill-style="none" y1="50" y2="250" stroke-width="0" stroke="#000000" x1="5" x2="25" fill="#ffffff"/>
+			</picture>
 					<labels>
 						<label textBinded="name" x="0" y="0"/>
 					</labels>
@@ -215,7 +184,29 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="newBehavioralDiagram" displayedName="New behavioral diagram" description="Элемент для описания основной из составляющих поведения системы. Должен вкладываться в newDachassModel">
+            <edge path="" description="Ia?aaa?a neaiaea" name="SignalSE" displayedName="Signal Edge">
+                <graphics>
+                    <lineType type="solidLine"/>
+                    <shape type="broken"/>
+		    <labels>
+                        <label textBinded="name" hard="true"/>
+                    </labels>
+                </graphics>
+                <logic>
+                    <associations endType="open_arrow" beginType="no_arrow">
+                    <association beginName="from" endName="to"/>
+                    </associations>
+                    <fromPorts/>
+                    <toPorts/>
+                    <explodesTo/>
+                    <dividability isDividable="false"/>
+                </logic>
+            </edge>
+        </graphicTypes>
+    </diagram>
+    <diagram nodeName="newBehavioralDiagram" name="BehavioralEditor">
+        <graphicTypes>
+            <node description="Aeaa?aiia caaaiey iiaaaaiey nenoaiu" name="newBehavioralDiagram" displayedName="New behavioral diagram">
                 <graphics>
                     <picture sizex="180" sizey="130">
                         <rectangle stroke-width="0" fill="#ffffff" y1="0" y2="130" x1="0" fill-style="none" x2="180" stroke="#000000" stroke-style="solid"/>
@@ -224,31 +215,11 @@
                     <ports/>
                 </graphics>
                 <logic>
-					<container>
-                        <contains type="State"/>
-                        <contains type="End"/>
-                        <contains type="Action"/>
-                        <contains type="If"/>
-                        <contains type="Subfunction"/>
-                        <contains type="BranchTo"/>
-                        <contains type="BranchName"/>
-                        <contains type="Switch"/>
-                        <contains type="Case"/>
-                        <contains type="To"/>
-                        <contains type="From"/>
-                        <contains type="Delay"/>
-                        <contains type="Empty"/>
-                        <contains type="ForBegin"/>
-                        <contains type="ForEnd"/>
-                        <contains type="WhileBegin"/>
-                        <contains type="WhileEnd"/>
-                        <contains type="Break"/>
-                        <contains type="Paralel"/>
-                    </container>
+                    <container/>
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="State" displayedName="State" description="Элемент, обозначающий некоторое состояние системы">
+            <node description="Caaieiaie" name="Header" displayedName="Header">
                 <graphics>
                     <picture sizex="190" sizey="60">
                         <ellipse stroke-width="0" fill="#ffffff" y1="0" y2="60" fill-style="none" x1="0" x2="190" stroke-style="solid" stroke="#000000"/>
@@ -257,7 +228,6 @@
                         <label x="40" y="20" textBinded="headerText"/>
                     </labels>
                     <ports>
-                        <pointPort type="NonTyped" x="95" y="0"/>
                         <pointPort type="NonTyped" x="95" y="60"/>
                     </ports>
                 </graphics>
@@ -269,7 +239,22 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="End" displayedName="End" description="Элемент, обозначающий конец некоторого алгоритма поведения системы">
+            <edge path="" description="Iau?iay eeiey-naycu" name="CommonEdgeBE" displayedName="Common Edge">
+                <graphics>
+                    <lineType type="solidLine"/>
+                    <shape type="square"/>
+                </graphics>
+                <logic>
+                    <associations endType="no_arrow" beginType="no_arrow">
+                        <association beginName="begin" endName="end"/>
+                    </associations>
+                    <fromPorts/>
+                    <toPorts/>
+                    <explodesTo/>
+                    <dividability isDividable="true"/>
+                </logic>
+            </edge>
+            <node name="End" displayedName="End">
                 <graphics>
                     <picture sizex="30" sizey="30">
                         <ellipse stroke-width="0" fill="#ffffff" y1="0" y2="30" fill-style="none" x1="0" x2="30" stroke-style="solid" stroke="#000000"/>
@@ -284,7 +269,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Action" displayedName="Action" description="Элемент, обозначающий некоторое действие в рамках системы">
+            <node name="Action" displayedName="Action">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<rectangle stroke-style="solid" fill-style="none" y1="0" y2="60" stroke-width="0" stroke="#000000" x1="0" x2="155" fill="#ffffff"/>
@@ -305,6 +290,7 @@
 				</graphics>
                 <logic>
                     <container/>
+
                     <properties>
                         <property type="string" name="code" displayedName="Code"/>
                     </properties>
@@ -312,7 +298,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="If" displayedName="If" description="Элемент, позволяющий задавать условие">
+            <node name="If" displayedName="If">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="30" stroke-width="0" stroke="#000000" x1="35" x2="0" fill="#ffffff"/>
@@ -344,7 +330,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Subfunction" displayedName="SubFunction" description="Элемент, обозначающий вызов некоторой другой функции">
+            <node name="Subfunction" displayedName="SubFunction">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<rectangle stroke-style="solid" fill-style="none" y1="0" y2="60" stroke-width="0" stroke="#000000" x1="0" x2="155" fill="#ffffff"/>
@@ -373,7 +359,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="BranchTo" displayedName="Branch To" description="Элемент, в котором указывается на какую ветку исполнения необходимо перейти">
+            <node name="BranchTo" displayedName="Branch To">
 				<graphics>
 					<picture sizex="160" sizey="70">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="20" stroke-width="0" stroke="#000000" x1="80" x2="160" fill="#ffffff"/>
@@ -397,7 +383,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="BranchName" displayedName="Branch Name" description="Элемент, позволяющий задавать имена веткам исполнения">
+            <node name="BranchName" displayedName="Branch Name">
                 <graphics>
 					<picture sizex="160" sizey="70">
 						<line stroke-style="solid" fill-style="none" y1="50" y2="70" stroke-width="0" stroke="#000000" x1="0" x2="80" fill="#ffffff"/>
@@ -421,7 +407,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Switch" displayedName="Switch" description="Элементы, позволяющий реализовать переключаталь по значению указанной переменной (работает в связке с элементом Case)">
+            <node name="Switch" displayedName="Switch">
                 <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="60" y2="0" stroke-width="0" stroke="#000000" x1="0" x2="20" fill="#ffffff"/>
@@ -451,7 +437,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Case" displayedName="Case" description="Элемент, позволяющий реализовать выборку по указанному значению некоторой переменной (работает в связке с элементом Switch)">
+            <node name="Case" displayedName="Case">
                 <graphics>
 					<picture sizex="160" sizey="70">
 						<line stroke-style="solid" fill-style="none" y1="50" y2="70" stroke-width="0" stroke="#000000" x1="0" x2="80" fill="#ffffff"/>
@@ -480,7 +466,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="To" displayedName="SignalTo" description="Элемент, обозначающий посылку указанного сигнала">
+            <node name="To" displayedName="To">
                <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="30" stroke-width="0" stroke="#000000" x1="130" x2="155" fill="#ffffff"/>
@@ -511,7 +497,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="From" displayedName="SignalFrom" description="Элемент, обозначающий приём указанного сигнала">
+            <node name="From" displayedName="From">
                 <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="30" stroke-width="0" stroke="#000000" x1="155" x2="130" fill="#ffffff"/>
@@ -542,7 +528,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Delay" displayedName="Delay" description="Элемент, обозначающий задержку на указанное число миллисекунд">
+            <node name="Delay" displayedName="Delay">
                 <graphics>
 					<picture sizex="60" sizey="40">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="0" stroke-width="0" stroke="#000000" x1="0" x2="60" fill="#ffffff"/>
@@ -567,14 +553,14 @@
                 <logic>
                     <container/>
                     <properties>
-                        <property type="int" name="time" displayedName="Amount of delay">
+                        <property type="int" name="time" displayedName="Amount  of delay">
                             <default>0</default>
                         </property>
                     </properties>
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Empty" displayedName="Empty" description="Элемент-заглушка некоторого поведения системы или части алгоритма">
+            <node name="Empty" displayedName="Empty">
                <graphics>
 					<picture sizex="155" sizey="80">
 						<rectangle stroke-style="solid" fill-style="solid" y1="0" y2="80" stroke-width="0" stroke="#000000" x1="0" x2="155" fill="#808080"/>
@@ -602,7 +588,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Paralel" displayedName="Paralel" description="Элемент, повзоляющий расспараллелить выполнение нескольких веток исполнения">
+            <node name="Paralel" displayedName="Paralel">
                <graphics>
 					<picture sizex="60" sizey="90">
 						<rectangle stroke="#000000" fill-style="none" y1="0" y2="90" x1="0" x2="60" fill="#ffffff" stroke-style="solid" stroke-width="1"/>
@@ -630,7 +616,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="ForBegin" displayedName="For Begin" description="Начало цикла For">
+            <node name="ForBegin" displayedName="For Begin">
                 <graphics>
 					<picture sizex="155" sizey="65">
 						<line stroke="#000000" fill-style="none" y1="0" y2="0" x1="25" x2="125" fill="#ffffff" stroke-style="solid" stroke-width="0"/>
@@ -666,7 +652,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="ForEnd" displayedName="For End" description="Конец цикла For">
+            <node name="ForEnd" displayedName="For End">
 				<graphics>
 					<picture sizex="155" sizey="35">
 						<line stroke="#000000" fill-style="none" y1="35" y2="35" x1="25" x2="125" fill="#ffffff" stroke-style="solid" stroke-width="0"/>
@@ -698,7 +684,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="WhileBegin" displayedName="While Begin" description="Начало обычного цикла While">
+            <node description="Ia?aei oeeea while" name="WhileBegin" displayedName="While Begin">
                 <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="30" stroke-width="0" stroke="#000000" x1="35" x2="0" fill="#ffffff"/>
@@ -732,7 +718,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="WhileEnd" displayedName="While End" description="Конец обычного цикла While">
+            <node description="Eiiao oeeea while" name="WhileEnd" displayedName="While End">
                 <graphics>
 					<picture sizex="155" sizey="60">
 						<line stroke-style="solid" fill-style="none" y1="0" y2="30" stroke-width="0" stroke="#000000" x1="35" x2="0" fill="#ffffff"/>
@@ -762,7 +748,7 @@
                     <explodesTo/>
                 </logic>
             </node>
-            <node name="Break" displayedName="Break or Continue" description="Элемент, обозначающий break или continue">
+            <node name="Break" displayedName="Break or Continue" >
                 <graphics>
 					<picture sizex="60" sizey="60">
 						<ellipse stroke="#000000" fill-style="none" y1="0" y2="60" x1="0" x2="60" fill="#ffffff" stroke-style="solid" stroke-width="0"/>
@@ -784,49 +770,5 @@
                 </logic>
             </node>
         </graphicTypes>
-		<palette>
-			<group name="Root Diagrams" description="Корневые элементы">
-				<element name="newDachassModel"/>
-				<element name="newFunctionalDiagram"/>
-				<element name="newStructualDiagram"/>
-				<element name="newSequenceDiagram"/>
-				<element name="newBehavioralDiagram"/>
-			</group>
-			<group name="Functional Diagram Elements" description="Элементы задания общей функциональности системы">
-				<element name="Function"/>
-				<element name="CommonEdge"/>
-				<element name="Signal"/>
-			</group>
-			<group name="Structual Diagram Elements" description="Элементы задания общей структуры системы">
-				<element name="ClassNode"/>
-				<element name="Contains"/>
-			</group>
-			<group name="Sequence Diagram Elements" description="Элементы задания последоательности сигналов в рамках поведения системы">
-				<element name="Object"/>
-				<element name="Signal"/>
-			</group>
-			<group name="Behavioral Diagram Elements" description="Элементы задания поведения системы">
-				<element name="State"/>
-				<element name="End"/>
-				<element name="Action"/>
-				<element name="To"/>
-				<element name="From"/>
-				<element name="Delay"/>
-				<element name="Paralel"/>
-				<element name="CommonEdge"/>
-				<element name="If"/>
-				<element name="Switch"/>
-				<element name="Case"/>
-				<element name="ForBegin"/>
-				<element name="ForEnd"/>
-				<element name="WhileBegin"/>
-				<element name="WhileEnd"/>
-				<element name="Break"/>
-				<element name="BranchTo"/>
-				<element name="BranchName"/>
-				<element name="Subfunction"/>
-				<element name="Empty"/>
-          </group>
-        </palette>
     </diagram>
 </metamodel>
