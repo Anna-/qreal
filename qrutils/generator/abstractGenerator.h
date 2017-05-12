@@ -49,6 +49,8 @@ public:
 	/// Abstract method that starts generation.
 	virtual void generate() = 0;
 
+	const QString mOutputDirPath;
+
 protected:
 	/// Loads a template from file and puts the result into loadedTemplate, returns true if successful.
 	bool loadTemplateFromFile(const QString &templateFileName, QString &loadedTemplate);
@@ -83,7 +85,7 @@ private:
 	bool loadUtilsFromDir();
 
 	/// Directory to place output files to.
-	const QString mOutputDirPath;
+	//const QString mOutputDirPath;
 
 	/// Returns a directory by given path or QDir() if there is no such path.
 	QDir getDir(const QString &path);
